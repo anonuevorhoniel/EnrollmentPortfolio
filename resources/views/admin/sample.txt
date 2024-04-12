@@ -1,0 +1,21 @@
+  public function saveSubs(Request $req)
+{
+    $req->validate([
+        'subj_name' => 'unique:subjects,subject_name'
+    ]);
+    $id = Auth::id();
+    $exists = CourseYearModel::where('id', $id)->first();
+     $created =  SubjectStudentModel::create([
+            'user_id' => $id,
+            'course_id' => $exists->id,
+            'year_level' => $req->input('year_level'),
+            'subject_name' => $req->input('subj_name'),
+            'schedule' => $req->input('schedule'),
+            'points' => $req->input('points')
+        ]);
+        if($created){
+        return new JsonResponse(['success' => 'Success'], 200);
+    } else {
+        return new JsonResponse(['error' => 'Subject Already Exists'], 422);
+    }
+}
