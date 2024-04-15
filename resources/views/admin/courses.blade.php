@@ -11,7 +11,7 @@
  <br><h3>Add Course</h3>
 <br>
         <input type="text" style="border: 1px solid black; width: 50%" class="form-control addCourse" name="" id=""><br>
-    <button class="btn btn-success addCourseBtn">Add Course</button>
+    <button class="btn btn-success addCourseBtn">Add Course</button><br>
 <br>
 <table class="table table-bordered ">
     <thead>
@@ -26,7 +26,7 @@
 
       <tr>
         <td>{{$item->courses}}</td>
-        <td><button class="btn btn-warning">Edit</button></td>
+        <td><button class="btn btn-warning editbtn" data-target="#exampleModal" data-toggle="modal" data-id="{{$item->id}}" data-course="{{$item->courses}}">Edit</button></td>
         <td> <button class="btn btn-danger">Remove</button></td>
       </tr>
             
@@ -37,6 +37,28 @@
         </div>
 </div>
 
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Course</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       <label for="">Course</label>
+       <input type="text" class="form-control courseinp" name="" id="">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary savebtn" data-dismiss="modal">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 </div>
 </div>
 </center>
@@ -49,6 +71,7 @@
 </style>
 <script>
 $(function() {
+  var id;
 $('.addCourseBtn').on('click', function (){
    $course = $('.addCourse').val();
    $.ajax({
@@ -67,6 +90,28 @@ $('.addCourseBtn').on('click', function (){
         console.log(response);
     }
    });
+});
+$('.editbtn').on('click', function(){
+id = $(this).data('id');
+ var course = $(this).data('course');
+  $('.courseinp').val(course);
+});
+
+$('.savebtn').on('click', function () {
+ var course = $('.courseinp').val();
+ $.ajax({
+  type: "PUT",
+  url: "/editcourse/" + id,
+  data: {'course' : course},
+  dataType: "json",
+  headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+  success: function (response) {
+    
+    alert('success');
+  }
+ });
 });
 })
 </script>

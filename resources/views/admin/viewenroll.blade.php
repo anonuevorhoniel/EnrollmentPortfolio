@@ -20,35 +20,65 @@
     <br>
    
            <div class="row">
-            <div class="col-6">
-              <h5>Pending Employees</h5><br>
-              <table class="table table-bordered ">
+            <div class="col-6"  style="">
+              <h5>Pending Students</h5><br>
+              <table class="table table-bordered "> 
                 <thead>
                   <tr>
-                    <th scope="col"></th>
                     <th scope="col">Name</th>
                     <th scope="col">Lastname</th>
-                    <th scope="col">Subject</th>
                     <th colspan="3" style="width: 10%">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
+                  <!-- pending table -->
+                  @if($users->count() < 1)
+                    <tr ><td colspan="4"  style="text-align: center">No Students Yet</td></tr>
+                    @else
                   @foreach ($users as $user)
                   <tr>
-                    <td><button  class="btn btn-primary">View</button></td>
                     <td>{{$user->name}}</td>
                     <td>{{$user->lastname}}</td>
-                    <td>{{$user->address}}</td>
-                    <td><button  class="btn btn-success acceptbtn">Accept</button></td>
-                    <td><button class="btn btn-warning">Edit</button></td>
-                    <td> <button class="btn btn-danger">Remove</button></td>
+              
+                    <td><button  class="btn btn-primary views" data-toggle="modal" data-target="#exampleModal"  data-user_id="{{$user->user_id}}" data-id="{{$user->id}}">View</button></td>
+                    <td><button  class="btn btn-success acceptbtn" data-user_id="{{$user->user_id}}" data-id="{{$user->id}}" data-name="{{$user->name}}" data-lastname="{{$user->lastname}}">Accept</button></td>
+                    <td> <button class="btn btn-danger" >Remove</button></td>
                   </tr>
                   @endforeach
-                  
+                  @endif
                 </tbody>
               </table>
             </div>
             
+            <div class="col-6" style="border-left: 1px solid black">
+              <h5>Accepted Enrollees </h5><br>
+              <table class="table table-bordered accepttable"> 
+                <thead>
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Lastname</th>
+                    <th colspan="3" style="width: 10%">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- accepted table -->
+                  @if($accepted->count() < 1)
+                  
+                    <tr id="nostud"><td colspan="4" style="text-align: center">No Students</td></tr>
+                  
+                  @else
+                  @foreach ($accepted as $user)
+                  <tr>
+                    <td>{{$user->name}}</td>
+                    <td>{{$user->lastname}}</td>
+                    <td><button  class="btn btn-primary views" data-toggle="modal" data-target="#exampleModal"  data-user_id="{{$user->student_id}}" data-id="{{$user->id}}">View</button></td>
+                    <td> <button class="btn btn-danger pending"  data-id="{{$user->id}}">Pending</button></td>
+                  </tr>
+                  @endforeach
+                  @endif
+                </tbody>
+              </table>
+            </div>
            </div>
           
         </div>
@@ -57,6 +87,50 @@
 </div>
 </div>
 </center>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">View Subjects</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+      <table class="table table-bordered" id="subjectTable">
+        <thead>
+          <th>Subject Name</th>
+          <th>Year Level</th>
+          <th>Schedule</th>
+          <th>Points</th>
+          <th>Course</th>
+        </thead>
+        <tbody>
+          @if($subjects != null)
+            @foreach($subjects as $subject)
+            <tr>
+              <td>{{$subject->subject_name}}</td>
+              <td>{{$subject ? $subject->year_level : '' }}</td>
+              <td>{{$subject ? $subject->schedule : ''  }}</td>
+              <td>{{ $subject ? $subject->points : ''  }}</td>
+              <td>{{ $subject ? $subject->course : '' }}</td>
+            </tr>
+          @endforeach
+          @else
+          <tr><td colspan="4" style="text-align: center">No Subjects</td></tr>
+          @endif
+       
+        </tbody>
+      </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <style>
     .inp
     {
@@ -65,15 +139,87 @@
 </style>
 <script>
   $(function (){
+    
     $('.acceptbtn').on('click', function () {
-      $.ajax({
-        type: "POST",
-        url: "/acceptstudent",
-        success: function (response) {
-          
-        }
-      });
+      var btn = $(this);
+      if(confirm("Do you want to accept this?"))
+   {   
+    var id = $(this).data('id');
+    var user_id = $(this).data('user_id');
+    var name = $(this).data('name');
+   var lastname = $(this).data('lastname');
+    $.ajax({
+      type: "POST",
+      url: "/acceptstudent/" + id + "/" + user_id,
+      data: {},
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+      dataType: "json",
+      success: function (response) {
+        $('#nostud').hide();
+        btn.closest('tr').remove();
+        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"' data-id='{{$user->id}}'>View</button></td><td> <button class='btn btn-danger pending'  data-id='{{$user->id}}'>Pending</button></td></tr>");
+      },
+      error: function (response) {
+        console.log(response);
+      }
+    });}
+    else
+    {
+      
+    }
     });
+  $('.views').on('click', function () {
+  var user_id =  $(this).data('user_id');
+    console.log(user_id);
+    $.ajax({
+      type: "GET",
+      url: "/viewstudentsub/" + user_id,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function (response) {
+            if (response.success) {
+                var subjects = response.subjects;
+                $('#subjectTable tbody').empty();
+                subjects.forEach(function (subject) {
+                    $('#subjectTable tbody').append('<tr><td>' + subject.subject_name + '</td><td>' + subject.year_level + '</td><td>'+subject.schedule+'</td><td>'+subject.points+'</td><td>' + subject.course + '</td>'   +'</tr>');
+                });
+            } else {
+                alert('Failed to retrieve subjects');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+            alert('Failed to fetch subjects');
+        }
+    });
+});
+$('.pending').on('click', function()
+{
+ var id = $(this).data('id');
+ var btn =  $(this);
+  console.log(id);
+  if(confirm('Do you want to send it to pending?'))
+  {
+    $.ajax({
+    type: "DELETE",
+    url: "/deleteaccept/"+id,
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function (response) {
+      btn.closest('tr').remove();
+    }
+  });
+  }
+  else
+  {
+
+  }
+ 
+})
   })
 </script>
 @endsection

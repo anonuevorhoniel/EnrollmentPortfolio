@@ -18,19 +18,32 @@
 <br>      
         <div class="row">
             <div class="col-7"><select name="" class="custom-select course" id="" style="width: 104.5%">
+                @if ($courses !== null)
                 @foreach ($courses as $item)
                     <option value="{{$item->courses}}" selected>{{$item->courses}}</option>
                 @endforeach
-                
+                @else
+                {
+                    <option value="">No Courses</option>
+                }
+                @endif
             </select></div>
             <div class="col-3">
                 <select name="" class="custom-select inp_year" id="">
+                    @if ($year !== null)
                     <option value="{{$year}}" selected>{{$year}}</option>
                     @foreach (['1st Year', '2nd Year', '3rd Year', '4th Year', 'Continuer'] as $option)
                         @unless ($option === $year)
                             <option value="{{$option}}">{{$option}}</option>
                         @endunless
                     @endforeach
+                    @else
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+
+                @endif
                 </select>
             </div>
         </div>
@@ -41,12 +54,11 @@
                 
             </div>
         </div>
-        <br>
-<br>
+    
 <div class="row">
-<div class="col-10"> <h3>Select Subjects</h3></div>
+<div class="col-12"> <h3>Select Subjects</h3></div>
 
-<div class="col-1" ><button class="btn btn-warning addSub">Add Subjects</button></div>
+<div class="col-12" ><button class="btn btn-warning addSub"> + Add Subjects</button></div><br><br>
 </div>
        <div class="alert alert-danger" id="exists">Subject selected already exists</div>
        <div class="alert alert-success" id="success">Subject/s Added</div>
@@ -62,24 +74,31 @@
               </tr>
             </thead>
             <tbody>
+                @if($subjects != null)
                 @foreach ($subjects as $subject)
-                <tr>
-                    <th scope="row"><input type="checkbox" class="checks"
-                        data-id="{{$subject->id}}" 
-                        data-sub="{{$subject->subj_name}}" 
-                        data-schedule="{{$subject->schedule}}" 
-                        data-points="{{$subject->points}}" 
-                        data-year="{{$subject->year_lvl}}" 
-                        data-course="{{$subject->course}}" 
-                        name="subjects[]" 
-                        id="subject_{{$subject->id}}"></th>
-                    <td>{{$subject->subj_name}}</td>
-                    <td>{{$subject->schedule}}</td>
-                    <td>{{$subject->points}}</td>
-                    <td>{{$subject->year_lvl}}</td>
-                    <td>{{$subject->course}}</td>
-                  </tr>
+                    <tr>
+                        <th scope="row"><input type="checkbox" class="checks"
+                            data-id="{{$subject->id}}"
+                            data-sub="{{$subject->subj_name}}"
+                            data-schedule="{{$subject->schedule}}"
+                            data-points="{{$subject->points}}"
+                            data-year="{{$subject->year_lvl}}"
+                            data-course="{{$subject->course}}"
+                            name="subjects[]"
+                            id="subject_{{$subject->id}}"></th>
+                        <td>{{$subject->subj_name}}</td>
+                        <td>{{$subject->schedule}}</td>
+                        <td>{{$subject->points}}</td>
+                        <td>{{$subject->year_lvl}}</td>
+                        <td>{{$subject->course}}</td>
+                    </tr>
                 @endforeach
+            @else
+                <tr>
+                    <td colspan="6">No subjects found</td>
+                </tr>
+            @endif
+            
              
              
             </tbody>
@@ -97,22 +116,27 @@
        <div class="row">
         <div class="col-12" >
             <br>
-        <p><b><a href="/dashboard" style="text-decoration: none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">1.Profile</button></a></b></p>
+        <p><b><a href="/dashboard" style="text-decoration: none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Profile</button></a></b></p>
     </div>
        </div>
        <div class="row">
         <div class="col-12" style="margin-top: -2%; ">
-        <a href="" style="text-decoration:none"><p><button style="border-left: 1px solid blue" disabled class="btn btn-light btn-block">2.Subjects</button></p></a>
+        <a href="" style="text-decoration:none"><p><button style="border-left: 1px solid blue" disabled class="btn btn-light btn-block">Subjects</button></p></a>
     </div>
     </div>
     <div class="row">
         <div class="col-12" style="margin-top: -2%; ">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">3.Cashier's Receipt</button></a></p>
+        <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Review Subjects</button></a></p>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-12" style="margin-top: -2%; ">
+        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Cashier's Receipt</button></a></p>
     </div>
     </div>
     <div class="row">
         <div class="col-12" style="margin-top: -2%;">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block ">4.Schedule</button></a></p>
+        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block ">Schedule</button></a></p>
     </div>
     </div>
         </div>
@@ -120,6 +144,10 @@
     </div>
 </div>
 </div>
+
+
+  
+
 </center>
 <style>
     .inp

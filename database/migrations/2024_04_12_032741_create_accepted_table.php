@@ -16,9 +16,10 @@ return new class extends Migration
             $table->unsignedBigInteger('student_id')->unique();
             $table->string('name');
             $table->string('lastname');
+            $table->string('course');
             $table->timestamps();
 
-            $table->foreign('student_id')->references('id')->on('enroll_table')->onDelete('cascade');
+            $table->foreign('student_id')->references('user_id')->on('enroll_table')->onDelete('cascade');
         });
     }
 

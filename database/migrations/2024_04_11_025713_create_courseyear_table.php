@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('year_level');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('enroll_table')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

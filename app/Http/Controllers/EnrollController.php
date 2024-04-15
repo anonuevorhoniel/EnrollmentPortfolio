@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcceptedModel;
 use App\Models\AdminCourseModel;
 use App\Models\CourseYearModel;
 use App\Models\Post;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Js;
 
 class EnrollController extends Controller
 {
@@ -61,14 +63,20 @@ class EnrollController extends Controller
          return redirect()->route('login');
         }
         else{
-            
-            $filtered = CourseYearModel::where('user_id', Auth::id())->first() ;
-            
-           $courses = AdminCourseModel::all();
+            $courses = AdminCourseModel::all();
+            if ( $filtered = CourseYearModel::where('user_id', Auth::id())->first())
+            {
            $subjects = SubjectModel::where('course', 'like', '%' .$filtered->course.'%')
-           ->where('year_lvl', 'like', '%' . $filtered->year_level . '%')
-           ->get();
-            return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level]);
+            ->where('year_lvl', 'like', '%' . $filtered->year_level . '%')
+            ->get();
+            
+                return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level]);
+
+            }   
+            else
+            {
+                return view('student/subjects', ['courses' => $courses, 'year' => null, 'subjects' => null]);
+            }
         }
        
     }
@@ -128,11 +136,21 @@ class EnrollController extends Controller
     
     public function viewUsers()
     {
-        $users = Enroll::whereNotIn('user_id', function($query) {
-            $query->select('user_id')->from('accepted');
-        })->get();
-        return view('admin/viewenroll', ['users' => $users]);
+        if (Auth::user()->role == 'student') {
+            return redirect()->route('student.dashboard');
+        } elseif (!Auth::check()) {
+            return redirect()->route('login');
+        } else {
+            $accepted = AcceptedModel::all();
+            $users = Enroll::whereNotIn('user_id', function($query) {
+                $query->select('student_id')->from('accepted');
+            })->get();
+            $course = null;
+          
+            return view('admin/viewenroll', ['users' => $users,  'subjects' => null, 'accepted' => $accepted]);
+        }
     }
+    
     public function loginAdmin(Request $req)
     {
        $login = $req->validate([
@@ -156,7 +174,7 @@ class EnrollController extends Controller
         }
         else
         {
-            return view('admin/dashboard', ['data' => SubjectModel::all(), 'course' => AdminCourseModel::all()]);
+            return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->get(), 'course' => AdminCourseModel::all()]);
         }
         
     }
@@ -169,14 +187,13 @@ class EnrollController extends Controller
             'points'  => 'required',
             'course' => 'required'
         ]);
-        $data = SubjectModel::all(); 
+        
         try {
-            SubjectModel::create($values);
-            return redirect()->route('admin.dashboard')->with(['success' => 'Added Successfully']);
-           
+            $created = SubjectModel::create($values);
+            return new JsonResponse(['success' => 'Success', 'id' => $created->id, 'subject' => $created->subj_name, 'schedule' => $created->schedule,
+           'year' => $created->year_lvl, 'points' => $created->points, 'course' => $created->course ], 200);
         } catch (\Throwable $th) {
-            return redirect()->route('admin.dashboard')->with('error', 'Failed to Add');
-        }
+            return new JsonResponse(['error' => 'Error'], 500);        }
            }
 
         public function editSub(Request $req, $id)
@@ -193,7 +210,9 @@ class EnrollController extends Controller
                $subject->course = $req->input('course');
                $subject->update();
                
-               return new JsonResponse(['message' => 'Success'], 200);
+               return new JsonResponse(['message' => 'Success', 'subject' =>$req->input('name'), 'schedule' => $req->input('sched'),
+            'points' => $req->input('points'), 'year' => $req->input('year'), 'course' => $req->input('course')
+            ], 200);
            }
            public function delete(Request $req, $id)
            {
@@ -201,34 +220,33 @@ class EnrollController extends Controller
             $idNew->delete();
            return new JsonResponse(['message' => 'Deleted'], 200);
            }
-
-          public function saveSubs(Request $req)
-{
-    $req->validate([
-        'subj_name' => 'unique:subjects,subject_name'
-    ]);
-    $id = Auth::id();
-    $exists = CourseYearModel::where('id', $id)->first();
-    try{
-     $created =  SubjectStudentModel::create([
-            'user_id' => $id,
-            'course_id' => $exists->id,
-            'year_level' => $req->input('year_level'),
-            'subject_name' => $req->input('subj_name'),
-            'schedule' => $req->input('schedule'),
-            'points' => $req->input('points'),
-            'course' => $req->input('course')
-        ]);
-        return new JsonResponse(['success' => 'Success'], 200);
-    } catch (\Exception $e) {
-        return response()->json(['error' => $e->getMessage()], 500);
-    }
-}
+           public function saveSubs(Request $req)
+           {
+               $id = Auth::id();
+               $exists = CourseYearModel::where('user_id', $id)->first();
+               $existsub = SubjectStudentModel::where('subject_name', $req->input('subj_name'))
+                                            ->where('user_id', $id)
+                                            ->exists();
+               if($existsub){
+             return response()->json(['error' => 'error'], 422);
+               } else {
+                   $created =  SubjectStudentModel::create([
+                       'user_id' => $id,
+                       'course_id' => $exists->id,
+                       'year_level' => $req->input('year_level'),
+                       'subject_name' => $req->input('subj_name'),
+                       'schedule' => $req->input('schedule'),
+                       'points' => $req->input('points'),
+                       'course' => $req->input('course')
+                   ]);
+                   return new JsonResponse(['success' => 'Success'], 200);
+               }
+           }
 public function courseyear(Request $req)
 {
   
     $id = Auth::id();
-   $exists = CourseYearModel::where('id', $id)->first();
+   $exists = CourseYearModel::where('user_id', $id)->first();
    if($exists)
    {
     $exists->update([
@@ -266,8 +284,87 @@ public function addCourses(Request $req)
             return new JsonResponse(['error' => 'error'], 500);
         }
 }
-public function acceptstudent(Request $req)
+public function acceptstudent(Request $req, $id, $user_id)
 {
+ 
+        $nameL = Enroll::where('user_id', $user_id)->first();
+        $courseYear = CourseYearModel::where('user_id', $user_id)->first();
+
+        AcceptedModel::create([
+            'student_id' => $user_id,
+            'name' => $nameL->name,
+            'lastname' => $nameL->lastname,
+            'course' => $courseYear->course
+        ]);
+        return response()->json(['success' => true], 200);
   
+    
+}
+public function review()
+{
+    $id = Auth::id();
+   $subjects = SubjectStudentModel::where('user_id', $id)->get();
+   if($subjects)
+   {
+    return view('student/review', ['subjects' => $subjects]);
+   }
+   else
+   {
+    return view('student/review', ['subjects' => null]);
+   }
+}
+public function deletesubject(Request $req, $id)
+{
+  $delete = SubjectStudentModel::find($id)->delete();
+if($delete)
+{
+return new JsonResponse(['success' => 'Deleted Successfuly'], 200);
+}
+else
+{
+    return new JsonResponse(['error' => 'There was en error in deleting'], 422);
+}
+}
+public function editcourse(Request $req, $id)
+{
+ $update = AdminCourseModel::find($id)->update([
+    'courses' => $req->input('course')
+            ]);
+if($update)
+  {
+    return new JsonResponse(['success' => 'Success'], 200);
+  }
+else
+ {
+return new JsonResponse(['error' => 'Error'], 500);
+ }
+    
+}
+public function viewstudentsub(Request $req, $id)
+{
+    if(Auth::user()->role == 'student')
+    {
+     return redirect()->route('student.dashboard');
+    }
+    else if (!Auth::check())
+    {
+     return redirect()->route('login');
+    }
+    else{
+   $subjects = SubjectStudentModel::where('user_id', $id)->get();
+    return new JsonResponse(['success' => 'Success', 'subjects' => $subjects], 200);
+    }
+}
+public function deleteaccept(Request $req, $id)
+{
+  $delete =  AcceptedModel::find($id)->delete();
+  if($delete)
+  {
+    return new JsonResponse(['success' => 'Successfuly Deleted'], 200);
+  }
+else
+{
+    return new JsonResponse(['error' => 'Error'], 500);
+}
 }
 }

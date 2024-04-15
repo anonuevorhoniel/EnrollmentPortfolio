@@ -28,7 +28,7 @@ Route::get('/loginAdmin', function()
     return view('loginAdmin');
 });
 Route::get('/dashboardAdmin',[EnrollController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
-Route::get('/viewenrollees', [EnrollController::class, 'viewUsers']);
+Route::get('/viewenrollees', [EnrollController::class, 'viewUsers'])->middleware('auth');
 Route::any('/logincheck', [EnrollController::class, 'loginAdmin']);
 //add
 Route::post('/addedsub', [EnrollController::class, 'addSubjects'])->name('addSubjects');
@@ -38,4 +38,9 @@ Route::post('/savesubject', [EnrollController::class, 'saveSubs']);
 Route::post('/courseyear', [EnrollController::class, 'courseyear']);
 Route::get('/courses', [EnrollController::class, 'courses']);
 Route::post('/addcourse', [EnrollController::class, 'addCourses']);
-Route::post('/acceptstudent', [EnrollController::class, 'acceptstudent']);
+Route::any('/acceptstudent/{id}/{user_id}', [EnrollController::class, 'acceptstudent']);
+Route::get('/review', [EnrollController::class, 'review']);
+Route::delete('/deletesubject/{id}', [EnrollController::class, 'deletesubject']);
+Route::put('/editcourse/{id}', [EnrollController::class, 'editcourse']);
+Route::get('/viewstudentsub/{id}', [EnrollController::class, 'viewstudentsub']);
+Route::delete('/deleteaccept/{id}', [EnrollController::class, 'deleteaccept']);

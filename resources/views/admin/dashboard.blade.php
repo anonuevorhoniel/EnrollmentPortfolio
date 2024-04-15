@@ -18,26 +18,25 @@
     @endif
     
     <h3>Add Subjects</h3>
-    <form method="POST" action="{{route('addSubjects')}}">
-      @csrf
-      @method('POST')
+   <!-- <form method="POST" action="{{route('addSubjects')}}"> -->
+     
         <div class="row">
             <div class="col-4">  
                 <div class="form-group">
                 <label for="exampleInputEmail1">Subject Name</label>
-                <input type="text" name="subj_name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="">
+                <input type="text" name="subj_name" class="form-control subject" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="">
               </div>
             </div>
             <div class="col-4">  
                 <div class="form-group">
                 <label for="exampleInputEmail1">Schedule/Time</label>
-                <input type="text" name="schedule" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="">
+                <input type="text" name="schedule" class="form-control schedule" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="">
               </div>
             </div>
             <div class="col-4">  
                 <div class="form-group">
                 <label for="exampleInputEmail1">Year</label>
-                <select name="year_lvl" id="year_lvl" class="custom-select">
+                <select name="year_lvl" id="year_lvl" class="custom-select year">
                   <option value="1st Year">1st Year</option>
                     <option value="2nd Year">2nd Year</option>
                     <option value="3rd Year">3rd Year</option>
@@ -51,25 +50,28 @@
             <div class="col-4">
                 <div class="form-group">
                     <label for="exampleInputPassword1">Points</label>
-                    <input type="number" class="form-control" name="points" id="exampleInputPassword1" placeholder="">
+                    <input type="number" class="form-control points" name="points" id="exampleInputPassword1" placeholder="">
                   </div>
                  
             </div>
             <div class="col-4">
               <div class="form-group">
                   <label for="exampleInputPassword1">Course</label>
-                  <select  class="form-control" name="course" id="exampleInputPassword1" placeholder="">
-                    @foreach ($course as $item)
-                    <option value="{{$item->courses}}">{{$item->courses}}</option>
-                    @endforeach
-                   
+                  <select  class="form-control course" name="course" id="exampleInputPassword1" placeholder="">
+                    @if($course->count() < 1) 
+                    <option value="">No Courses Yet</option>
+                   @else
+                   @foreach ($course as $item)
+                   <option value="{{$item->courses}}">{{$item->courses}}</option>
+                   @endforeach
+                   @endif
                   </select>
                 </div>
             </div>
         </div>
        
-        <button type="submit" class="btn btn-primary" id="sub">Submit</button>
-      </form>
+        <button class="btn btn-primary" id="sub">Submit</button>
+    
             <br>
     <br>
    
@@ -78,8 +80,10 @@
            @else
 
           
-
-            <table class="table table-bordered ">
+          <div class="alert alert-danger deletediv">Successfully Delete</div>
+          <div class="alert alert-success addeddiv">Successfully Added</div>
+          <div class="alert alert-warning updatediv">Successfully Updated</div>
+            <table class="table table-bordered tablesubject">
                 <thead>
                   <tr>
                     <th scope="col">Subject Name</th>
@@ -117,7 +121,7 @@
           
 
   
-  <!-- Modal -->
+  <!-- Modal Edit -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -140,11 +144,11 @@
             </div>
             </div>
             <div class="row">
-                <div class="col-6">
+                <div class="col-6"><br>
                         <label for="">Points</label>
                         <input type="text" class="form-control points" name="points" id="points">
                 </div>
-                <div class="col-6">
+                <div class="col-6"><br>
                     <label for="">Year Level</label>
                     <select name="year_lvl" id="year_lvl" class="custom-select year">
                         <option value="1st Year">1st Year</option>
@@ -157,9 +161,13 @@
             </div>
             <br>
             <div class="row">
-              <div class="col-6">
+              <div class="col-12">
                 <label for="">Course</label>
-                <input type="text" name="" id="course" class="form-control course">
+                <select type="text" name="" id="course" class="form-control course">
+                  @foreach ($course as $item)
+                  <option value="{{$item->courses}}">{{$item->courses}}</option>
+                  @endforeach
+                </select>
               </div>
             </div>
        
@@ -186,12 +194,13 @@
 </style>
 <script>
 $(function() {
-
+  $('.deletediv').hide();
+  $('.updatediv').hide();
+  $('.addeddiv').hide();
 //get muna nasa data ng  button
-    
     $id = $('.edit').data('id');
 
-$(".edit").on('click', function () {
+ $(document).on('click', '.edit',  function () {
 $id = $(this).data('id');
 $name = $(this).data('name');
 $sched = $(this).data('sched');
@@ -217,7 +226,7 @@ $("#savec").on('click', function () {
         'name' : name,
         'sched' : sched,
         'points' : points,
-        'year' :year,
+        'year' : year,
         'course' : course
     }
     console.log(data);
@@ -226,18 +235,37 @@ $("#savec").on('click', function () {
         url: "/updatedata/" + $id,
         data: data,
         headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         dataType: "json",
         success: function (response) {
             console.log(response);
+            var $tableRow = $('button[data-id="' + $id + '"]').closest('tr');
+            $tableRow.find('td:eq(0)').text(name);
+            $tableRow.find('td:eq(1)').text(sched);
+            $tableRow.find('td:eq(2)').text(points);
+            $tableRow.find('td:eq(3)').text(year);
+            $tableRow.find('td:eq(4)').text(course);
+    $('#name').val(name);
+    $('#sched').val(sched);
+    $('#points').val(points);
+    $('.year').val(year); 
+    $('#course').val(course);
+    var editBtn = $("button[data-id='"+ $id +"']");
+    editBtn.data('name', name);
+    editBtn.data('sched', sched);
+    editBtn.data('points', points);
+    editBtn.data('year', year);
+    editBtn.data('course', course);
         },
         error: function (response) { 
-          console.log(response);
-         }
+            console.log(response);
+        }
     });
 });
-$('.deleteBtn').on('click', function (){
+
+$(document).on('click', '.deleteBtn', function (){
+ var btn = $(this);
 if(confirm('Do you want to delete this?'))
 {
  $id = $(this).data('id');
@@ -249,11 +277,54 @@ if(confirm('Do you want to delete this?'))
     url: "/delete/" + $id,
     success: function (response) {
       console.log(response);
+      btn.closest('tr').remove();
     }
   });
 }
 })
+$("#sub").on('click', function () {
+  var subject = $('.subject').val();
+  var schedule = $('.schedule').val();
+  var year = $('.year').val();
+  var points = $('.points').val();
+  var course = $('.course').val();
 
+  var data = {
+    'subj_name' : subject,
+    'schedule' : schedule,
+    'year_lvl' : year,
+    'points' : points,
+    'course' : course
+  }
+  console.log(data);
+  $.ajax({
+    type: "POST",
+    url: "/addedsub",
+    data: data,
+    dataType: "json",
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+    success: function (response) {
+      console.log(response.id);
+      console.log(response.subject);
+      console.log(response.schedule);
+      console.log(response.points);
+      console.log(response.year);
+      console.log(response.course);
+      $('.tablesubject tbody').prepend("<tr><td>"+ subject + "</td><td>"+ schedule + "</td><td>" + year + "</td><td>" + points + "</td><td>"+ course
+        + "<td><button class='btn btn-warning edit' id='editmodal' data-id = '"+ response.id + "'" +
+    "data-sched = '"+ response.schedule + "'" +
+    "data-name = '"+ response.subject + "'" +
+    "data-points = '"+ response.points + "'" +
+    "data-year = '"+ response.year + "'" +
+    "data-course = '"+ response.course + "'" +
+    "data-toggle='modal' data-target='#exampleModal'>Edit</button></td>" + 
+    "<td> <button class='btn btn-danger deleteBtn' data-id='"+ response.id+"'>Delete</button>" +
+    "</td></tr>");
+    }
+  });
+});
 })
 </script>
-@endsection
+@endsection 
