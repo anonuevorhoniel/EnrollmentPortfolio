@@ -28,7 +28,7 @@ Route::get('/loginAdmin', function()
     return view('loginAdmin');
 });
 Route::get('/dashboardAdmin',[EnrollController::class, 'adminDashboard'])->name('admin.dashboard')->middleware('auth');
-Route::get('/viewenrollees', [EnrollController::class, 'viewUsers'])->middleware('auth');
+Route::get('/viewenrollees', [EnrollController::class, 'viewUsers'])->middleware('auth')->name('view.enrollees');
 Route::any('/logincheck', [EnrollController::class, 'loginAdmin']);
 //add
 Route::post('/addedsub', [EnrollController::class, 'addSubjects'])->name('addSubjects');
@@ -36,10 +36,10 @@ Route::put('/updatedata/{id}', [EnrollController::class, 'editSub']);
 Route::delete('/delete/{id}', [EnrollController::class, 'delete']);
 Route::post('/savesubject', [EnrollController::class, 'saveSubs']);
 Route::post('/courseyear', [EnrollController::class, 'courseyear']);
-Route::get('/courses', [EnrollController::class, 'courses']);
+Route::get('/courses', [EnrollController::class, 'courses'])->middleware('auth')->name('admin.courses');
 Route::post('/addcourse', [EnrollController::class, 'addCourses']);
 Route::any('/acceptstudent/{id}/{user_id}', [EnrollController::class, 'acceptstudent']);
-Route::get('/review', [EnrollController::class, 'review']);
+Route::get('/review', [EnrollController::class, 'review'])->middleware('auth');
 Route::delete('/deletesubject/{id}', [EnrollController::class, 'deletesubject']);
 Route::put('/editcourse/{id}', [EnrollController::class, 'editcourse']);
 Route::get('/viewstudentsub/{id}', [EnrollController::class, 'viewstudentsub']);

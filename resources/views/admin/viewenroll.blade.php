@@ -159,7 +159,7 @@
       success: function (response) {
         $('#nostud').hide();
         btn.closest('tr').remove();
-        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"'>View</button></td><td> <button class='btn btn-danger pending' data-name='"+name+"' data-lastname='"+lastname+"' data-user_id='"+ user_id+"'  data-id='"+response.id+"'>Pending</button></td></tr>");
+        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"''>View</button></td><td> <button class='btn btn-danger pending' data-name='"+name+"' data-lastname='"+lastname+"' data-user_id='"+ user_id+"'  data-id='"+response.id+"'>Pending</button></td></tr>");
       },
       error: function (response) {
         console.log(response);
@@ -216,7 +216,7 @@ $(document).on('click','.pending', function()
     success: function (response) {
       $('.pendingnostudents').hide();
       btn.closest('tr').remove();
-      $('.pendingtable tbody').prepend("<tr><td>"+ name +"</td><td>"+ lastname +"</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='"+ user_id + "' data-id='{{$user->id}}'>View</button>" +
+      $('.pendingtable tbody').prepend("<tr><td>"+ name +"</td><td>"+ lastname +"</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='"+ user_id + "''>View</button>" +
 "<td><button  class='btn btn-success acceptbtn' data-user_id='"+user_id+"' data-id='"+id+"' data-name='"+name+"' data-lastname='"+lastname+"'>Accept</button></td>" + 
 "<td> <button class='btn btn-danger removestudent'  data-user_id='"+user_id+"' data-id='"+id+"'>Remove</button></td></tr>");
 

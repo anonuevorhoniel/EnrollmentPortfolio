@@ -34,16 +34,18 @@
                   <a class="dropdown-item" href="#" id="logout">Logout</a>
                 </div>
               </div>
+              <li class="nav-item">
+                <a href="/viewenrollees"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >View Enrollees  </button></a>
+          </li>
+              <li class="nav-item">
+                <a href="/courses"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >Courses </button></a>
+          </li>
             </li>
             <li class="nav-item">
               <a href="/dashboardAdmin"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >Add Subjects</button></a>
         </li>
-            <li class="nav-item">
-                    <a href="/viewenrollees"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >View Enrollees  </button></a>
-              </li>
-              <li class="nav-item">
-                <a href="/courses"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >Courses </button></a>
-          </li>
+           
+            
 
      
      

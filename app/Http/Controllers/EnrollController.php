@@ -60,7 +60,7 @@ class EnrollController extends Controller
     {
         if(Auth::user()->role == 'admin')
         {
-         return redirect()->route('admin.dashboard');
+         return redirect()->route('view.enrollees');
         }
         else if (!Auth::check())
         {
@@ -87,7 +87,7 @@ class EnrollController extends Controller
     public function dashboard(Request $req){
         if(Auth::user()->role == 'admin')
            {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('view.enrollees');
            }
            else if (!Auth::check())
            {
@@ -124,7 +124,7 @@ class EnrollController extends Controller
             }
             else
             {
-                return redirect()->intended(route('admin.dashboard'));
+                return redirect()->intended(route('view.enrollees'));
             }
            
         }
@@ -149,7 +149,7 @@ class EnrollController extends Controller
             $users = Enroll::whereNotIn('user_id', function($query) {
                 $query->select('student_id')->from('accepted');
             })->get();
-            $course = null;
+            
           
             return view('admin/viewenroll', ['users' => $users,  'subjects' => null, 'accepted' => $accepted]);
         }
