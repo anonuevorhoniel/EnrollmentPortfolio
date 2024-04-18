@@ -44,3 +44,7 @@ Route::delete('/deletesubject/{id}', [EnrollController::class, 'deletesubject'])
 Route::put('/editcourse/{id}', [EnrollController::class, 'editcourse']);
 Route::get('/viewstudentsub/{id}', [EnrollController::class, 'viewstudentsub']);
 Route::delete('/deleteaccept/{id}', [EnrollController::class, 'deleteaccept']);
+Route::delete('/deletestudent/{user_id}', [EnrollController::class, 'deletestudent']);
+Route::delete('/deletecourse/{id}', [EnrollController::class, 'deletecourse']);
+Route::get('/checkverification', [EnrollController::class, 'checkverification']);
+Route::post('/uploadpdf', [EnrollController::class, 'uploadpdf']);

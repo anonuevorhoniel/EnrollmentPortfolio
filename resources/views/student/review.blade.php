@@ -14,6 +14,10 @@
       
            
     <div class="alert alert-danger remove">Removed</div>
+    <div class="alert alert-warning verifying">ⓘ For Verficiation</div>
+    <div class="alert alert-danger denied">Verification Denied</div>
+    <div class="alert alert-success verified  ">Verified</div>
+
         <table class="table table-bordered">
             <thead>
               <tr>					
@@ -22,7 +26,7 @@
                 <th scope="col">Points</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Course</th>
-                <th scope="col" colspan="2">Action</th>
+                <th scope="col" class="action" colspan="2">Action</th>
 
               </tr>
             </thead>
@@ -165,6 +169,29 @@
 <script>
   $(function()
 {
+  $('.verifying').hide();
+  $('.denied').hide();
+  $('.verified').hide();
+  $.ajax({
+  type: "GET",
+  url: "/checkverification",
+  success: function (response) {
+    if(response.verified)
+    {
+      $('.verified').show();
+      $('.verifying').hide();
+      $('.denied').hide();
+      $('.deletebtn').hide();
+      $('.action').hide();
+    }
+    if(response.unverified)
+    {
+      $('.verifying').hide();
+      $('.verified').hide();
+      $('.denied').show();
+    }
+  }
+});
     $('.remove').hide();
     $('.editbtn').hide();
 $('.editbtn').on('click', function () {
@@ -215,6 +242,7 @@ $('.deletebtn').on('click', function () {
 
     }
 });
+
 })
 </script>
 @endsection

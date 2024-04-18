@@ -22,7 +22,7 @@
            <div class="row">
             <div class="col-6"  style="">
               <h5>Pending Students</h5><br>
-              <table class="table table-bordered "> 
+              <table class="table table-bordered pendingtable"> 
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
@@ -33,7 +33,7 @@
                 <tbody>
                   <!-- pending table -->
                   @if($users->count() < 1)
-                    <tr ><td colspan="4"  style="text-align: center">No Students Yet</td></tr>
+                    <tr ><td colspan="4" class="pendingnostudents"  style="text-align: center">No Students Yet</td></tr>
                     @else
                   @foreach ($users as $user)
                   <tr>
@@ -42,7 +42,7 @@
               
                     <td><button  class="btn btn-primary views" data-toggle="modal" data-target="#exampleModal"  data-user_id="{{$user->user_id}}" data-id="{{$user->id}}">View</button></td>
                     <td><button  class="btn btn-success acceptbtn" data-user_id="{{$user->user_id}}" data-id="{{$user->id}}" data-name="{{$user->name}}" data-lastname="{{$user->lastname}}">Accept</button></td>
-                    <td> <button class="btn btn-danger" >Remove</button></td>
+                    <td> <button class="btn btn-danger removestudent"  data-user_id="{{$user->user_id}}" data-id="{{$user->id}}">Remove</button></td>
                   </tr>
                   @endforeach
                   @endif
@@ -72,7 +72,7 @@
                     <td>{{$user->name}}</td>
                     <td>{{$user->lastname}}</td>
                     <td><button  class="btn btn-primary views" data-toggle="modal" data-target="#exampleModal"  data-user_id="{{$user->student_id}}" data-id="{{$user->id}}">View</button></td>
-                    <td> <button class="btn btn-danger pending"  data-id="{{$user->id}}">Pending</button></td>
+                    <td> <button class="btn btn-danger pending" data-user_id = "{{$user->student_id}}"  data-id="{{$user->id}}">Pending</button></td>
                   </tr>
                   @endforeach
                   @endif
@@ -140,7 +140,7 @@
 <script>
   $(function (){
     
-    $('.acceptbtn').on('click', function () {
+    $(document).on('click','.acceptbtn', function () {
       var btn = $(this);
       if(confirm("Do you want to accept this?"))
    {   
@@ -159,7 +159,7 @@
       success: function (response) {
         $('#nostud').hide();
         btn.closest('tr').remove();
-        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"' data-id='{{$user->id}}'>View</button></td><td> <button class='btn btn-danger pending'  data-id='{{$user->id}}'>Pending</button></td></tr>");
+        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"' data-id='{{$user->id}}'>View</button></td><td> <button class='btn btn-danger pending' data-name='"+name+"' data-lastname='"+lastname+"' data-user_id='"+ user_id+"'  data-id='"+response.id+"'>Pending</button></td></tr>");
       },
       error: function (response) {
         console.log(response);
@@ -170,7 +170,7 @@
       
     }
     });
-  $('.views').on('click', function () {
+  $(document).on('click','.views', function () {
   var user_id =  $(this).data('user_id');
     console.log(user_id);
     $.ajax({
@@ -196,21 +196,30 @@
         }
     });
 });
-$('.pending').on('click', function()
-{
+$(document).on('click','.pending', function()
+{ 
  var id = $(this).data('id');
+ var user_id = $(this).data('user_id');
  var btn =  $(this);
   console.log(id);
+  $rows = btn.closest('tr');
+  var name = $rows.find('td:eq(0)').text();
+  var lastname = $rows.find('td:eq(1)').text();
   if(confirm('Do you want to send it to pending?'))
   {
     $.ajax({
     type: "DELETE",
-    url: "/deleteaccept/"+id,
+    url: "/deleteaccept/"+user_id,
     headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
     success: function (response) {
+      $('.pendingnostudents').hide();
       btn.closest('tr').remove();
+      $('.pendingtable tbody').prepend("<tr><td>"+ name +"</td><td>"+ lastname +"</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='"+ user_id + "' data-id='{{$user->id}}'>View</button>" +
+"<td><button  class='btn btn-success acceptbtn' data-user_id='"+user_id+"' data-id='"+id+"' data-name='"+name+"' data-lastname='"+lastname+"'>Accept</button></td>" + 
+"<td> <button class='btn btn-danger removestudent'  data-user_id='"+user_id+"' data-id='"+id+"'>Remove</button></td></tr>");
+
     }
   });
   }
@@ -220,6 +229,28 @@ $('.pending').on('click', function()
   }
  
 })
+$(document).on('click','.removestudent', function () {
+ if(confirm('Do you want to remove this student?'))
+ {
+  var tr = $(this);
+ var id = $(this).data('id');
+ var user_id = $(this).data('user_id');
+ $.ajax({
+  type: "DELETE",
+  url: "/deletestudent/" + user_id,
+  headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+  success: function (response) {
+    tr.closest('tr').remove();
+  }
+ });
+ }
+ else
+ {
+  
+ }
+});
   })
 </script>
 @endsection

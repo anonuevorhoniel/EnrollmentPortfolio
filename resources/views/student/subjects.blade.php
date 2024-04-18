@@ -49,16 +49,21 @@
         </div>
         <br>
         <div class="row">
-            <div class="col-2" style="margin-left: -3%">
+            <div class="col-12">
                 <form action=""><button class="btn btn-success coursesub">Submit</button></form>
                 
             </div>
-        </div>
-    
+        </div><br>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Add the Cashier's Receipt</label>
+            <input class="form-control inputreceipt" type="file" id="formFile"><br>
+            <button class="btn btn-primary receiptbtn">Submit</button>
+          </div>
 <div class="row">
 <div class="col-12"> <h3>Select Subjects</h3></div>
 
-<div class="col-12" ><button class="btn btn-warning addSub"> + Add Subjects</button></div><br><br>
+<div class="col-12" ><button class="btn btn-warning addSub"> + Add Subjects</button> </div><br><br>
+
 </div>
        <div class="alert alert-danger" id="exists">Subject selected already exists</div>
        <div class="alert alert-success" id="success">Subject/s Added</div>
@@ -217,6 +222,26 @@
             }
         });
     });
+    $('.receiptbtn').on('click', function()
+{
+ $inputfile =  $('.inputreceipt')[0];
+ $file = $inputfile.files[0];
+var formData = new FormData();
+formData.append('file', $file);
+$.ajax({
+    type: "POST",
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+    url: "/uploadpdf",
+    data: formData,
+    contentType: false,
+    processData: false,
+    success: function (response) {
+        alert('success');
+    }
+});
+})
 });
 
 </script>

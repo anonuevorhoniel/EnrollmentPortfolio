@@ -8,6 +8,7 @@ use App\Models\CourseYearModel;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Enroll;
+use App\Models\PDFModel;
 use App\Models\SubjectModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -17,6 +18,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Js;
+use League\CommonMark\Node\Block\Document;
+use RealRashid\SweetAlert\Facades\Alert;
+use Wavey\Sweetalert\Sweetalert;
 
 class EnrollController extends Controller
 {
@@ -278,7 +282,8 @@ public function addCourses(Request $req)
         ]);
         if($success)
         {
-            return new JsonResponse(['success' => 'Success!'], 200);
+            Alert::success('Success Title', 'Success Message');
+            return new JsonResponse(['success' => 'Success!', 'id' => $success->id], 200);
         }
         else{
             return new JsonResponse(['error' => 'error'], 500);
@@ -290,13 +295,13 @@ public function acceptstudent(Request $req, $id, $user_id)
         $nameL = Enroll::where('user_id', $user_id)->first();
         $courseYear = CourseYearModel::where('user_id', $user_id)->first();
 
-        AcceptedModel::create([
+      $created =  AcceptedModel::create([
             'student_id' => $user_id,
             'name' => $nameL->name,
             'lastname' => $nameL->lastname,
             'course' => $courseYear->course
         ]);
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => 'Success', 'id' => $created->id ], 200);
   
     
 }
@@ -355,16 +360,75 @@ public function viewstudentsub(Request $req, $id)
     return new JsonResponse(['success' => 'Success', 'subjects' => $subjects], 200);
     }
 }
-public function deleteaccept(Request $req, $id)
-{
-  $delete =  AcceptedModel::find($id)->delete();
-  if($delete)
-  {
+public function deleteaccept(Request $req, $user_id)
+{   try{
+
+  $delete =  AcceptedModel::where('student_id', $user_id)->delete();
     return new JsonResponse(['success' => 'Successfuly Deleted'], 200);
   }
-else
-{
-    return new JsonResponse(['error' => 'Error'], 500);
+  catch (\Exception $e) {
+    Log::error('An error occurred: ' . $e->getMessage());
+    // Optionally, you can also log the stack trace
+    Log::error($e->getTraceAsString());
+    // Handle the exception or rethrow it
+    throw $e;
 }
+}
+public function deletestudent($user_id)
+{
+   $removed = Enroll::where('user_id', $user_id)->delete();
+   if($removed)
+   {
+ return new JsonResponse(['success' => 'Success'], 200);
+   }
+   else
+   {
+    return new JsonResponse(['error' => 'Error'], 500);
+
+   }
+}
+public function deletecourse($id)
+{
+    
+   $delete = AdminCourseModel::find($id)->delete();
+    if($delete)
+    {
+        Alert::success('Success Title', 'Success Message');
+        return new JsonResponse(['success' => "success"], 200);
+    }
+    else
+    {
+        return new JsonResponse(['error' => "error"], 200);
+
+    }
+}
+public function checkverification()
+{
+   $id = Auth::id();
+    if(AcceptedModel::where('student_id', $id)->first())
+    {
+        return new JsonResponse(['verified' => 'Verified'], 200);
+    }
+    if(!Enroll::where('user_id', $id))
+    {
+        return new JsonResponse(['unverified'=>'Not verified'], 200);
+    }
+
+}
+public function uploadpdf(Request $req){
+     $req->validate([
+        'formData' => 'required|mimes:pdf|max:2048'
+    ]);
+    $file = $req->file('formData');
+    $path = $file->store('pdfs', 'public');
+    $document = new PDFModel();
+    $document->user_id = Auth::id();
+    $document->filename = $path;
+    $document->original_name = $file->getClientOriginalName();
+    $document->mime_type = $file->getClientMimeType();
+    $document->size = $file->getSize();
+    $document->save();
+
+    return new JsonResponse(['success'=>'success'], 200);
 }
 }

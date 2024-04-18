@@ -2,6 +2,7 @@
 @section('title')
     <title>Admin Dashboard</title>
 @endsection
+@include('sweetalert::alert')
 
 @section('content')
 <center>

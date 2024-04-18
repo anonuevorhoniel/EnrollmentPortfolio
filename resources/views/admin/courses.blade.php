@@ -13,7 +13,7 @@
         <input type="text" style="border: 1px solid black; width: 50%" class="form-control addCourse" name="" id=""><br>
     <button class="btn btn-success addCourseBtn">Add Course</button><br>
 <br>
-<table class="table table-bordered ">
+<table class="table table-bordered tablecourse">
     <thead>
       <tr>
       
@@ -27,7 +27,7 @@
       <tr>
         <td>{{$item->courses}}</td>
         <td><button class="btn btn-warning editbtn" data-target="#exampleModal" data-toggle="modal" data-id="{{$item->id}}" data-course="{{$item->courses}}">Edit</button></td>
-        <td> <button class="btn btn-danger">Remove</button></td>
+        <td> <button class="btn btn-danger removecourse" data-id="{{$item->id}}">Remove</button></td>
       </tr>
             
       @endforeach
@@ -38,7 +38,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Edit Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -61,6 +61,7 @@
 </div>
 </div>
 </div>
+
 </center>
 
 <style>
@@ -72,8 +73,11 @@
 <script>
 $(function() {
   var id;
+  var tr;
 $('.addCourseBtn').on('click', function (){
-   $course = $('.addCourse').val();
+  if(confirm('Do you want to add this?'))
+  
+  { $course = $('.addCourse').val();
    $.ajax({
     type: "POST",
     url: "/addcourse",
@@ -84,20 +88,26 @@ $('.addCourseBtn').on('click', function (){
     },
     success: function (response) {
         console.log(response);
+        $('.tablecourse tbody').prepend("<tr><td>"+$course+"</td><td><button class='btn btn-warning editbtn' data-target='#exampleModal' data-toggle='modal' data-id='"+ response.id +"' data-course='"+$course+"'>Edit</button></td>"+
+ "<td> <button class='btn btn-danger removecourse' data-id='"+ response.id +"'>Remove</button></td></tr>");
     },
     error: function(response)
     {
         console.log(response);
     }
    });
+  }
 });
-$('.editbtn').on('click', function(){
+$(document).on('click','.editbtn', function(){
 id = $(this).data('id');
- var course = $(this).data('course');
+tr = $(this);
+ var td = tr.closest('tr');
+var course = td.find('td:eq(0)').text();
   $('.courseinp').val(course);
 });
 
 $('.savebtn').on('click', function () {
+  
  var course = $('.courseinp').val();
  $.ajax({
   type: "PUT",
@@ -108,11 +118,31 @@ $('.savebtn').on('click', function () {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     },
   success: function (response) {
-    
-    alert('success');
+    $tableRow = tr.closest('tr');
+    $tableRow.find('td:eq(0)').text(course);
   }
  });
 });
+$(document).on('click', '.removecourse', function (){
+  
+    var tr = $(this);
+    var id =  $(this).data('id');
+    $.ajax({
+      type: "DELETE",
+      url: "/deletecourse/" + id,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+      success: function (response) {
+        console.log('success');
+        tr.closest('tr').remove();
+      }
+    });
+  
+
+
+  })
+  
 })
 </script>
 @endsection
