@@ -20,7 +20,8 @@
     <form action="{{route('create.content')}}" method="POST">
         @csrf
         <div class="form-group">
-            <div><h3>Update Profile</h3></div><br>
+            <div class="updateprofile"><h3>Update Profile</h3></div>
+            <div class="alert alert-success verifieddiv">Verified</div><br>
         <div class="row">
             <div class="col-6">
                 <label for="">Name</label>
@@ -52,7 +53,7 @@
             </div>
         </div><br><br>
         <div class="row">
-            <div class="col-12"><button style="width: 30%" class="btn btn-success">Submit</button></div>
+            <div class="col-12"><button style="width: 30%" class="btn btn-success subsub">Submit</button></div>
         </div>
         </div>
     </form>
@@ -93,6 +94,27 @@
 </div>
 </div>
 </center>
+<script>
+    $(function()
+{
+    $('.verifieddiv').hide();
+    $.ajax({
+        type: "GET",
+        url: "/checkprofilever",
+        success: function (response) {
+            if(response.verified)
+            {
+                $('.subsub').prop('disabled', true)
+                $('.inp').prop('disabled', true)
+                $('.updateprofile').hide();
+                $('.verifieddiv').show();
+            }
+            if()
+        }
+    });
+})
+  
+</script>
 <style>
     .inp
     {

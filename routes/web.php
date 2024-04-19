@@ -48,3 +48,5 @@ Route::delete('/deletestudent/{user_id}', [EnrollController::class, 'deletestude
 Route::delete('/deletecourse/{id}', [EnrollController::class, 'deletecourse']);
 Route::get('/checkverification', [EnrollController::class, 'checkverification']);
 Route::post('/uploadpdf', [EnrollController::class, 'uploadpdf']);
+Route::get('/checksubverified', [EnrollController::class, 'checksubverified']);
+Route::get('/checkprofilever', [EnrollController::class, 'checkprofilever']);

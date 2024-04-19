@@ -88,7 +88,7 @@
 </div>
 </center>
 
-<!-- Modal -->
+<!-- Modal ng view subjects -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -99,6 +99,11 @@
         </button>
       </div>
       <div class="modal-body">
+        <div class="row">
+          <div class="col-12">   <label for="">Receipt: </label>
+            <a href="" class="pdfdivs"></a></div>
+        </div>
+     
       <table class="table table-bordered" id="subjectTable">
         <thead>
           <th>Subject Name</th>
@@ -121,9 +126,10 @@
           @else
           <tr><td colspan="4" style="text-align: center">No Subjects</td></tr>
           @endif
-       
+      
         </tbody>
       </table>
+      
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -182,10 +188,14 @@
     success: function (response) {
             if (response.success) {
                 var subjects = response.subjects;
+                var pdffile = response.idpdf;
                 $('#subjectTable tbody').empty();
                 subjects.forEach(function (subject) {
                     $('#subjectTable tbody').append('<tr><td>' + subject.subject_name + '</td><td>' + subject.year_level + '</td><td>'+subject.schedule+'</td><td>'+subject.points+'</td><td>' + subject.course + '</td>'   +'</tr>');
                 });
+                $('.pdfdivs').text(pdffile.original_name);
+                $('.pdfdivs').attr('href', pdffile.path + pdffile.filename);
+              
             } else {
                 alert('Failed to retrieve subjects');
             }

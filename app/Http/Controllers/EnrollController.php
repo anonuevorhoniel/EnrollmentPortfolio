@@ -67,6 +67,7 @@ class EnrollController extends Controller
          return redirect()->route('login');
         }
         else{
+           $idpdf = PDFModel::where('user_id', Auth::id())->first();
             $courses = AdminCourseModel::all();
             if ( $filtered = CourseYearModel::where('user_id', Auth::id())->first())
             {
@@ -74,7 +75,7 @@ class EnrollController extends Controller
             ->where('year_lvl', 'like', '%' . $filtered->year_level . '%')
             ->get();
             
-                return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level]);
+                return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level, 'pdfs' => $idpdf]);
 
             }   
             else
@@ -149,7 +150,7 @@ class EnrollController extends Controller
             $users = Enroll::whereNotIn('user_id', function($query) {
                 $query->select('student_id')->from('accepted');
             })->get();
-            
+    
           
             return view('admin/viewenroll', ['users' => $users,  'subjects' => null, 'accepted' => $accepted]);
         }
@@ -356,8 +357,10 @@ public function viewstudentsub(Request $req, $id)
      return redirect()->route('login');
     }
     else{
+        $idpdf = PDFModel::where('user_id', $id)->first();
+        
    $subjects = SubjectStudentModel::where('user_id', $id)->get();
-    return new JsonResponse(['success' => 'Success', 'subjects' => $subjects], 200);
+    return new JsonResponse(['success' => 'Success', 'subjects' => $subjects, 'idpdf' => $idpdf], 200);
     }
 }
 public function deleteaccept(Request $req, $user_id)
@@ -377,7 +380,8 @@ public function deleteaccept(Request $req, $user_id)
 public function deletestudent($user_id)
 {
    $removed = Enroll::where('user_id', $user_id)->delete();
-   if($removed)
+   $removesubject = SubjectStudentModel::where('user_id', $user_id)->delete();
+   if($removed && $removesubject)
    {
  return new JsonResponse(['success' => 'Success'], 200);
    }
@@ -409,26 +413,88 @@ public function checkverification()
     {
         return new JsonResponse(['verified' => 'Verified'], 200);
     }
-    if(!Enroll::where('user_id', $id))
+    else if(Enroll::where('user_id', $id)->first() && !AcceptedModel::where('student_id', $id)->first())
+        {
+        return new JsonResponse(['unverified'=>'Verifying'], 200);
+    }
+    else
     {
-        return new JsonResponse(['unverified'=>'Not verified'], 200);
+        return new JsonResponse(['notverified'=>'Not Verified'], 200);
     }
 
 }
 public function uploadpdf(Request $req){
-     $req->validate([
-        'formData' => 'required|mimes:pdf|max:2048'
-    ]);
-    $file = $req->file('formData');
-    $path = $file->store('pdfs', 'public');
-    $document = new PDFModel();
-    $document->user_id = Auth::id();
-    $document->filename = $path;
-    $document->original_name = $file->getClientOriginalName();
-    $document->mime_type = $file->getClientMimeType();
-    $document->size = $file->getSize();
-    $document->save();
+   
+        $req->validate([
+            'forms' => 'required|file|mimes:pdf' 
+        ]);
+        $file = $req->file('forms');
+        $id = Auth::id();
+        $ifexists = PDFModel::where('user_id', $id)->first();
+        $path = 'pdfs/';
+        $extension = $file->getClientOriginalExtension();
+       $size = $file->getSize() / (1024);
+        $filename = time(). '.'. $extension;
+        if($ifexists)
+        {
+            if (file_exists(public_path($ifexists->path . $ifexists->filename))) {
+                unlink(public_path($ifexists->path . $ifexists->filename));
+                $file->move($path, $filename);
+            }
+            try {
+                PDFModel::where('user_id', $id)->update([
 
-    return new JsonResponse(['success'=>'success'], 200);
+                    'filename' => $filename,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getClientMimeType(),
+                    'size' => $size,
+                    'path' => $path
+                ]);
+                return new JsonResponse(['success' => 'success', 'id' => $id], 200);
+            } catch (\Exception $e) {
+                return new JsonResponse(['error' => $e->getMessage()], 500);
+            }
+        }
+        else
+        {
+            $file->move($path, $filename);
+            try {
+            PDFModel::create([
+                'user_id' => Auth::id(),
+                'filename' => $filename,
+                'original_name' => $file->getClientOriginalName(),
+                'mime_type' => $file->getClientMimeType(),
+                'size' => $size,
+                'path' => $path
+            ]);
+            return new JsonResponse(['success' => 'success', 'id' => $id], 200);
+        } catch (\Exception $e) {
+            return new JsonResponse(['error' => $e->getMessage()], 500);
+        }
+        }
+      
+}
+
+public function checksubverified()
+{
+ $id = Auth::id();
+ if(AcceptedModel::where('student_id', $id)->first())
+ {
+    return new JsonResponse(['verified' => 'Verified'], 200);
+ }
+ else{
+    return new JsonResponse(['unverified' => 'Not Verified'], 200);
+ }
+}
+public function checkprofilever()
+{
+    $id = Auth::id();
+    if(AcceptedModel::where('student_id', $id)->first())
+    {
+        return new JsonResponse(['verified' => 'Verified'], 200);
+    }
+    else if(Enroll::where('user_id', $id)->first() && !AcceptedModel::where('student_id', $id)->first()){
+        return new JsonResponse(['unverified' => 'Pending Verification'], 200);
+     }
 }
 }

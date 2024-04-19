@@ -15,7 +15,8 @@
 @endforeach
     
 @endif
-<br>      
+<br>                  <div class="alert alert-success verified">Verified</div>
+
         <div class="row">
             <div class="col-7"><select name="" class="custom-select course" id="" style="width: 104.5%">
                 @if ($courses !== null)
@@ -29,21 +30,11 @@
                 @endif
             </select></div>
             <div class="col-3">
-                <select name="" class="custom-select inp_year" id="">
-                    @if ($year !== null)
-                    <option value="{{$year}}" selected>{{$year}}</option>
-                    @foreach (['1st Year', '2nd Year', '3rd Year', '4th Year', 'Continuer'] as $option)
-                        @unless ($option === $year)
-                            <option value="{{$option}}">{{$option}}</option>
-                        @endunless
-                    @endforeach
-                    @else
+                <select name="" class="custom-select inp_year" id="" >
                     <option value="1st Year">1st Year</option>
                     <option value="2nd Year">2nd Year</option>
                     <option value="3rd Year">3rd Year</option>
                     <option value="4th Year">4th Year</option>
-
-                @endif
                 </select>
             </div>
         </div>
@@ -53,12 +44,26 @@
                 <form action=""><button class="btn btn-success coursesub">Submit</button></form>
                 
             </div>
-        </div><br>
+        </div>
+        <hr style="border: 1px solid black">
         <div class="mb-3">
-            <label for="formFile" class="form-label">Add the Cashier's Receipt</label>
-            <input class="form-control inputreceipt" type="file" id="formFile"><br>
-            <button class="btn btn-primary receiptbtn">Submit</button>
+            <div class="mb-3">
+                <div class="receiptdisplay"></div><br>
+                <button class="btn btn-primary addbtnreceipt">Add Receipt</button>
+                <input class="form-control inputreceipt" type="file" style="display: none" name="forms" id="formFile">
+                <button class="btn btn-primary receiptbtn">Submit</button>
+                @if($pdfs)
+                <div class="pdfsdiv">{{$pdfs->original_name}}</div>
+                @else
+                @endif
+                <div class="errorsa"></div>
+            </div>
+            
+
           </div>
+      <!--ditoooooooo-->
+     <hr style="border: 1px solid black">
+          <div class="subjectohide">
 <div class="row">
 <div class="col-12"> <h3>Select Subjects</h3></div>
 
@@ -109,6 +114,7 @@
             </tbody>
           </table>
     </div>
+</div>
 </div>
 <div class="col-3">
     <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; margin-left: 2%; border-radius: 7px; padding-bottom: 7%;">
@@ -162,6 +168,8 @@
 </style>
 <script>
    $(function (){
+    $('.receiptbtn').hide();
+    $('.verified').hide();
     $('#exists').hide();
     $('#success').hide();
     $('.addSub').on('click', function () {
@@ -222,27 +230,52 @@
             }
         });
     });
-    $('.receiptbtn').on('click', function()
-{
- $inputfile =  $('.inputreceipt')[0];
- $file = $inputfile.files[0];
-var formData = new FormData();
-formData.append('file', $file);
-$.ajax({
-    type: "POST",
-    headers: {
-        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-    url: "/uploadpdf",
-    data: formData,
-    contentType: false,
-    processData: false,
-    success: function (response) {
-        alert('success');
-    }
+    $('.addbtnreceipt').on('click', function() {
+    $('.inputreceipt').click();
 });
-})
+$(document).on('change', '.inputreceipt', function() {
+    $('.receiptbtn').show();
+    var file = this.files[0];
+$('.pdfsdiv').text(file.name);
+});
+    $('.receiptbtn').on('click', function() {
+    var inputfile = $('.inputreceipt')[0];
+    var file = inputfile.files[0];
+    var formData = new FormData();
+    formData.append('forms', file);
+    $.ajax({
+        type: "POST",
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        url: "/uploadpdf",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            alert('success');
+        },
+        error: function(response) {
+            console.log(response.error);
+        }
+    });
 });
 
+   });
+$('.inp_year').val('{{$year}}');
+
+$.ajax({
+    type: "GET",
+    url: "/checksubverified",
+    success: function (response) {
+        if(response.verified)
+        {
+            $('.coursesub').prop('disabled', true);
+            $('.addbtnreceipt').prop('disabled', true);
+            $('.addSub').prop('disabled', true);
+            $('.verified').show();
+        }
+    }
+});
 </script>
 @endsection

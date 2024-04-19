@@ -31,7 +31,7 @@
               </tr>
             </thead>
             <tbody>
-                @if($subjects != null)
+                @if($subjects->count() > 0)
                 @foreach ($subjects as $subject)
               <tr>
                 <td>{{$subject->subject_name}}</td>
@@ -53,7 +53,7 @@
               </tr>
               @endforeach
               @else
-              <td>NO SUBJECTS YET</td>
+              <td colspan="6" style="text-align: center">NO SUBJECTS YET</td>
               @endif
             </tbody>
           </table>
@@ -185,6 +185,12 @@
       $('.action').hide();
     }
     if(response.unverified)
+    {
+      $('.verifying').show();
+      $('.verified').hide();
+      $('.denied').hide();
+    }
+    if(response.notverified)
     {
       $('.verifying').hide();
       $('.verified').hide();
