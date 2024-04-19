@@ -109,7 +109,6 @@
                 $('.updateprofile').hide();
                 $('.verifieddiv').show();
             }
-            if()
         }
     });
 })
