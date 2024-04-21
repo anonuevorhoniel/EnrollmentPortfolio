@@ -51,10 +51,24 @@
                 <div class="receiptdisplay"></div><br>
                 <button class="btn btn-primary addbtnreceipt">Add Receipt</button>
                 <input class="form-control inputreceipt" type="file" style="display: none" name="forms" id="formFile">
-                <button class="btn btn-primary receiptbtn">Submit</button>
-                @if($pdfs)
-                <div class="pdfsdiv">{{$pdfs->original_name}}</div>
+                <button class="btn btn-primary receiptbtn">Submit</button><br><br>
+                @if(isset($pdfs)) 
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                        <th>File Name</th>
+                        <th> File Size</th>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="pdfs/{{$pdfs->filename}}" class="pdfsdiv">{{$pdfs->original_name}}</a>
+                            </td>
+                            <td><div class="pdfsize">{{$pdfs->size}}Kb</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
                 @else
+                <div>No PDF</div>
                 @endif
                 <div class="errorsa"></div>
             </div>
@@ -72,7 +86,9 @@
 </div>
        <div class="alert alert-danger" id="exists">Subject selected already exists</div>
        <div class="alert alert-success" id="success">Subject/s Added</div>
-        <table class="table table-bordered ">
+       <label for="">Check All</label>
+       <input type="checkbox" class="checkall" name="" id="">
+        <table class="table table-bordered table-striped table-hover ">
             <thead>
               <tr>
                 <th scope="col"></th>
@@ -84,7 +100,7 @@
               </tr>
             </thead>
             <tbody>
-                @if($subjects != null)
+                @if($subjects->count() > 0)
                 @foreach ($subjects as $subject)
                     <tr>
                         <th scope="row"><input type="checkbox" class="checks"
@@ -105,7 +121,7 @@
                 @endforeach
             @else
                 <tr>
-                    <td colspan="6">No subjects found</td>
+                    <td colspan="6" style="text-align: center">No subjects found</td>
                 </tr>
             @endif
             
@@ -116,7 +132,7 @@
     </div>
 </div>
 </div>
-<div class="col-3">
+<div class="col-3" style="overflow-y:auto; overflow-x:auto">
     <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; margin-left: 2%; border-radius: 7px; padding-bottom: 7%;">
        <br><img src="{{asset('profile.jpg')}}" alt="" style="width: 40%; height: 40%; border-radius: 100%"><br><br>
        <div class="row">
@@ -172,6 +188,22 @@
     $('.verified').hide();
     $('#exists').hide();
     $('#success').hide();
+    $(document).on('change', '.checkall', function()
+{
+    if ($(this).prop('checked'))
+    {
+        $('.checks').each(function(){
+            $(this).prop('checked', true);
+        });
+    }
+    else
+    {
+        $('.checks').each(function(){
+            $(this).prop('checked', false);
+        });
+    }
+});
+    
     $('.addSub').on('click', function () {
         $('.checks:checked').each(function() {
     var id = $(this).data('id');
@@ -233,10 +265,13 @@
     $('.addbtnreceipt').on('click', function() {
     $('.inputreceipt').click();
 });
+
 $(document).on('change', '.inputreceipt', function() {
     $('.receiptbtn').show();
     var file = this.files[0];
+    var fileSize = (file.size / 1024).toFixed(2);
 $('.pdfsdiv').text(file.name);
+$('.pdfsize').text(fileSize + 'Kb');
 });
     $('.receiptbtn').on('click', function() {
     var inputfile = $('.inputreceipt')[0];

@@ -21,6 +21,7 @@
    
            <div class="row">
             <div class="col-6"  style="">
+              {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
               <h5>Pending Students</h5><br>
               <table class="table table-bordered pendingtable"> 
                 <thead>
@@ -48,9 +49,11 @@
                   @endif
                 </tbody>
               </table>
+              {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
             </div>
             
             <div class="col-6" style="border-left: 1px solid black">
+            {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
               <h5>Accepted Enrollees </h5><br>
               <table class="table table-bordered accepttable"> 
                 <thead>
@@ -78,6 +81,7 @@
                   @endif
                 </tbody>
               </table>
+              {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
             </div>
            </div>
           

@@ -80,7 +80,7 @@ class EnrollController extends Controller
             }   
             else
             {
-                return view('student/subjects', ['courses' => $courses, 'year' => null, 'subjects' => null]);
+                return view('student/subjects', ['courses' => $courses, 'year' => null, 'subjects' => null,  'pdfs' => $idpdf]);
             }
         }
        
@@ -146,10 +146,10 @@ class EnrollController extends Controller
         } elseif (!Auth::check()) {
             return redirect()->route('login');
         } else {
-            $accepted = AcceptedModel::all();
+            $accepted = AcceptedModel::paginate(5, ['*'], 'accepted');
             $users = Enroll::whereNotIn('user_id', function($query) {
                 $query->select('student_id')->from('accepted');
-            })->get();
+            })->paginate(5, ['*'],  'users');
     
           
             return view('admin/viewenroll', ['users' => $users,  'subjects' => null, 'accepted' => $accepted]);
@@ -179,7 +179,7 @@ class EnrollController extends Controller
         }
         else
         {
-            return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->get(), 'course' => AdminCourseModel::all()]);
+            return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->paginate(5), 'course' => AdminCourseModel::paginate(5)]);
         }
         
     }
@@ -273,7 +273,7 @@ public function courseyear(Request $req)
 }
 public function courses()
 {
-    return view('admin/courses', ['data' => AdminCourseModel::all()]);
+    return view('admin/courses', ['data' => AdminCourseModel::paginate(5)]);
 }
 public function addCourses(Request $req)
 {
@@ -496,5 +496,10 @@ public function checkprofilever()
     else if(Enroll::where('user_id', $id)->first() && !AcceptedModel::where('student_id', $id)->first()){
         return new JsonResponse(['unverified' => 'Pending Verification'], 200);
      }
+}
+public function editprofile()
+{
+    $id = User::where('id', Auth::id())->first();
+    return view('student/profile', ['users' => $id]);
 }
 }

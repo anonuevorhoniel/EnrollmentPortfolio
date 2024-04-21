@@ -13,6 +13,7 @@
         <input type="text" style="border: 1px solid black; width: 50%" class="form-control addCourse" name="" id=""><br>
     <button class="btn btn-success addCourseBtn">Add Course</button><br>
 <br>
+{{$data->links();}}
 <table class="table table-bordered tablecourse">
     <thead>
       <tr>

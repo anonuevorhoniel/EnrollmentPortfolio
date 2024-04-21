@@ -22,7 +22,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" href="#">Student Enrollment <span class="sr-only">(current)</span></a>
+              <a class="nav-link">Student Enrollment <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
               <div class="dropdown">
@@ -30,7 +30,7 @@
                   Profile
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                  <a class="dropdown-item" href="#">Edit Profile</a>
+                  <a class="dropdown-item" href="/editprofile">Edit Profile</a>
                   <a class="dropdown-item" href="#">{{auth()->user()->name}}</a>
                   <a class="dropdown-item" href="#" id="logout">Logout</a>
                 </div>

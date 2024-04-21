@@ -84,6 +84,7 @@
           <div class="alert alert-danger deletediv">Successfully Delete</div>
           <div class="alert alert-success addeddiv">Successfully Added</div>
           <div class="alert alert-warning updatediv">Successfully Updated</div>
+          {{$data->links()}}
             <table class="table table-bordered tablesubject">
                 <thead>
                   <tr>
