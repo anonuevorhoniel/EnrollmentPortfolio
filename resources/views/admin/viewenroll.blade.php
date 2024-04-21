@@ -5,7 +5,7 @@
 
 @section('content')
 <center>
-<div class="row" style="padding: 2% " >
+<div class="row" style="padding: 2%;" >
     <div class="col-12">
         <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; border-radius: 7px; padding-bottom: 4%;">
             @if ($errors->any())
@@ -14,16 +14,16 @@
     @endforeach
         
     @endif
-    <br>      
-    <h3>View Enrollees</h3>
+      
+    <h5 class="col-12"  style=" text-align:left; padding: 2px; border-radius: 10px">Admin/View Enrollees</h5>
             <br>
     <br>
    
            <div class="row">
-            <div class="col-6"  style="">
+            <div class="col-12"  style="">
               {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
-              <h5>Pending Students</h5><br>
-              <table class="table table-bordered pendingtable"> 
+              <h5><b>Pending Students</b></h5><br>
+              <table class="table table-bordered table-striped table-hover pendingtable"> 
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
@@ -52,10 +52,10 @@
               {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
             </div>
             
-            <div class="col-6" style="border-left: 1px solid black">
+            <div class="col-12" ><br><br>
             {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
-              <h5>Accepted Enrollees </h5><br>
-              <table class="table table-bordered accepttable"> 
+              <h5><b>Accepted Enrollees </b></h5><br>
+              <table class="table table-bordered table-hover table-striped accepttable"> 
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
@@ -75,7 +75,8 @@
                     <td>{{$user->name}}</td>
                     <td>{{$user->lastname}}</td>
                     <td><button  class="btn btn-primary views" data-toggle="modal" data-target="#exampleModal"  data-user_id="{{$user->student_id}}" data-id="{{$user->id}}">View</button></td>
-                    <td> <button class="btn btn-danger pending" data-user_id = "{{$user->student_id}}"  data-id="{{$user->id}}">Pending</button></td>
+                    <td> <button class="btn btn-warning pending" data-user_id = "{{$user->student_id}}"  data-id="{{$user->id}}">Pending</button></td>
+                    <td> <button class="btn btn-danger deleteacceptstudent" data-user_id = "{{$user->student_id}}"  data-id="{{$user->id}}">Delete Student</button></td>
                   </tr>
                   @endforeach
                   @endif
@@ -149,7 +150,25 @@
 </style>
 <script>
   $(function (){
-    
+    $(document).on('click', '.deleteacceptstudent', function(){
+      var btn = $(this);
+      if(confirm('Do you want to delete this student?'))
+      {
+      var user_id =  $(this).data('user_id');
+       var id = $(this).data('id');
+      
+        $.ajax({
+          type: "DELETE",
+          headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                   },
+          url: "/deleteacceptstudent/" + user_id,
+          success: function (response) {
+              btn.closest('tr').remove();
+          }
+        });
+      }
+    })
     $(document).on('click','.acceptbtn', function () {
       var btn = $(this);
       if(confirm("Do you want to accept this?"))
@@ -169,7 +188,8 @@
       success: function (response) {
         $('#nostud').hide();
         btn.closest('tr').remove();
-        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"''>View</button></td><td> <button class='btn btn-danger pending' data-name='"+name+"' data-lastname='"+lastname+"' data-user_id='"+ user_id+"'  data-id='"+response.id+"'>Pending</button></td></tr>");
+        $('.accepttable tbody').append("<tr><td>" + name +"</td><td>"+ lastname + "</td><td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='" + user_id +"''>View</button></td><td> <button class='btn btn-warning pending' data-name='"+name+"' data-lastname='"+lastname+"' data-user_id='"+ user_id+"'  data-id='"+response.id+"'>Pending</button></td> <td> <button class='btn btn-danger pending' data-user_id = '"+user_id+"'>Delete Student</button></td></tr>");
+        
       },
       error: function (response) {
         console.log(response);

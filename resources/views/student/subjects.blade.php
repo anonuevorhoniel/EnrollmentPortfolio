@@ -9,6 +9,8 @@
 <div class="row" style="padding: 2% " >
     <div class="col-9">
     <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; border-radius: 7px; padding-bottom: 4%; margin-right: -3%">
+        <h5 class="col-12"  style=" text-align:left; padding: 2px; border-radius: 10px">Student/Add Subjects</h5>
+
         @if ($errors->any())
 @foreach ($errors->all() as $error)
 <ul class="alert alert-danger" style="margin-top: -1%">{{$error}}</ul>
@@ -16,6 +18,7 @@
     
 @endif
 <br>                  <div class="alert alert-success verified">Verified</div>
+<h5 class="col-12"  style=" text-align:center; padding: 2px; border-radius: 10px">Course & Year</h5>
 
         <div class="row">
             <div class="col-7"><select name="" class="custom-select course" id="" style="width: 104.5%">
@@ -48,8 +51,8 @@
         <hr style="border: 1px solid black">
         <div class="mb-3">
             <div class="mb-3">
-                <div class="receiptdisplay"></div><br>
-                <button class="btn btn-primary addbtnreceipt">Add Receipt</button>
+                <div class="receiptdisplay"></div>
+                <h5 class="col-12"  style=" text-align:center; padding: 2px; border-radius: 10px">Add Cashier's Receipt</h5>
                 <input class="form-control inputreceipt" type="file" style="display: none" name="forms" id="formFile">
                 <button class="btn btn-primary receiptbtn">Submit</button><br><br>
                 @if(isset($pdfs)) 
@@ -72,20 +75,27 @@
                 @endif
                 <div class="errorsa"></div>
             </div>
-            
+            <button class="btn btn-primary addbtnreceipt">Add Receipt</button>
+
 
           </div>
       <!--ditoooooooo-->
      <hr style="border: 1px solid black">
           <div class="subjectohide">
 <div class="row">
-<div class="col-12"> <h3>Select Subjects</h3></div>
-
+<div class="col-12">                 <h5 class="col-12"  style=" text-align:center; padding: 2px; border-radius: 10px">Add Subjects</h5>
+</div>
+<br><br>
 <div class="col-12" ><button class="btn btn-warning addSub"> + Add Subjects</button> </div><br><br>
 
 </div>
-       <div class="alert alert-danger" id="exists">Subject selected already exists</div>
-       <div class="alert alert-success" id="success">Subject/s Added</div>
+
+       <div class="alert alert-danger" id="exists"> <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>Subject/s selected already exists</div>
+       <div class="alert alert-success" id="success"><button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button> Subject/s Added</div>
        <label for="">Check All</label>
        <input type="checkbox" class="checkall" name="" id="">
         <table class="table table-bordered table-striped table-hover ">
@@ -102,7 +112,7 @@
             <tbody>
                 @if($subjects->count() > 0)
                 @foreach ($subjects as $subject)
-                    <tr>
+                    <tr class="rowcheck">
                         <th scope="row"><input type="checkbox" class="checks"
                             data-id="{{$subject->id}}"
                             data-sub="{{$subject->subj_name}}"
@@ -148,7 +158,7 @@
        </div>
        <div class="row">
         <div class="col-12" style="margin-top: -2%; ">
-        <a href="" style="text-decoration:none"><p><button style="border-left: 1px solid blue" disabled class="btn btn-light btn-block">Subjects</button></p></a>
+        <a href=""  style="text-decoration:none"><p><button style="border-left: 1px solid blue"  class="btn btn-light btn-block" disabled>Subjects</button></p></a>
     </div>
     </div>
     <div class="row">
@@ -157,13 +167,8 @@
     </div>
     </div>
     <div class="row">
-        <div class="col-12" style="margin-top: -2%; ">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Cashier's Receipt</button></a></p>
-    </div>
-    </div>
-    <div class="row">
         <div class="col-12" style="margin-top: -2%;">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block ">Schedule</button></a></p>
+        <p><a href="/schedule" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block" >Schedule</button></a></p>
     </div>
     </div>
         </div>
@@ -188,6 +193,21 @@
     $('.verified').hide();
     $('#exists').hide();
     $('#success').hide();
+
+$(document).on('click', '.rowcheck', function()
+{
+$check = $(this).find('input[type="checkbox"]');
+$check.prop('checked', function(x, y)
+{
+    return !y;
+})
+});
+
+    $(document).on('click', '.close', function() {
+    $(this).closest('div').hide();
+});
+
+
     $(document).on('change', '.checkall', function()
 {
     if ($(this).prop('checked'))

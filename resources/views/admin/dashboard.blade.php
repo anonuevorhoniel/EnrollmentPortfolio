@@ -18,8 +18,8 @@
     <ul class="alert alert-success" style="margin-top: -1%">{{$message}}</ul>
     @endif
     
-    <h3>Add Subjects</h3>
-   <!-- <form method="POST" action="{{route('addSubjects')}}"> -->
+    <h5 class="col-12"  style=" text-align:left; padding: 2px; border-radius: 10px">Admin/Add Subjects</h5><br>
+    <!-- <form method="POST" action="{{route('addSubjects')}}"> -->
      
         <div class="row">
             <div class="col-4">  

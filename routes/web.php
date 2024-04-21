@@ -51,3 +51,5 @@ Route::post('/uploadpdf', [EnrollController::class, 'uploadpdf']);
 Route::get('/checksubverified', [EnrollController::class, 'checksubverified']);
 Route::get('/checkprofilever', [EnrollController::class, 'checkprofilever']);
 Route::get('/editprofile', [EnrollController::class, 'editprofile'])->middleware('auth');
+Route::get('/schedule', [EnrollController::class, 'schedule']);
+Route::delete('/deleteacceptstudent/{id}', [EnrollController::class, 'deleteacceptstudent']);

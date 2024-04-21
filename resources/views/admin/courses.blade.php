@@ -8,10 +8,10 @@
 <div class="row" style="padding: 2% " >
     <div class="col-12">
         <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; border-radius: 7px; padding-bottom: 4%;">
- <br><h3>Add Course</h3>
-<br>
-        <input type="text" style="border: 1px solid black; width: 50%" class="form-control addCourse" name="" id=""><br>
-    <button class="btn btn-success addCourseBtn">Add Course</button><br>
+          <h5 class="col-12"  style=" text-align:left; padding: 2px; border-radius: 10px">Admin/Add Course</h5>
+          <br>
+        <input type="text" style="border: 1px solid black; width: 50%; text-align:center" class="form-control addCourse" placeholder="Add Course" name="" id=""><br>
+    <button class="btn btn-success addCourseBtn">+ Add</button><br>
 <br>
 {{$data->links();}}
 <table class="table table-bordered tablecourse">

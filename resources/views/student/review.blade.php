@@ -9,11 +9,13 @@
 <div class="row" style="padding: 2% " >
     <div class="col-9">
     <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; border-radius: 7px; padding-bottom: 4%; margin-right: -3%; overflow-x: auto">
-       <h3>Review Subjects</h3>
-       <br>
+      <h5 class="col-12"  style=" text-align:left; padding: 2px; border-radius: 10px">Student/Review Subjects</h5>
+      <br>
       
            
-    <div class="alert alert-danger remove">Removed</div>
+    <div class="alert alert-danger remove"><button type="button" class="close" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>Removed</div>
     <div class="alert alert-warning verifying">ⓘ For Verficiation</div>
     <div class="alert alert-danger denied">Verification Denied</div>
     <div class="alert alert-success verified  ">Verified</div>
@@ -60,40 +62,35 @@
     </div>
 </div>
 <div class="col-3">
-    <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; margin-left: 2%; border-radius: 7px; padding-bottom: 7%;">
-       <br><img src="{{asset('profile.jpg')}}" alt="" style="width: 40%; height: 40%; border-radius: 100%"><br><br>
-       <div class="row">
-        <div class="col-12">
-            <button class="btn btn-primary">Edit Picture</button>
-        </div>
-       </div>
-       <div class="row">
-        <div class="col-12" >
-            <br>
-        <p><b><a href="/dashboard" style="text-decoration: none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Profile</button></a></b></p>
-    </div>
-       </div>
-       <div class="row">
-        <div class="col-12" style="margin-top: -2%; ">
-        <a href="/subjects" style="text-decoration:none"><p><button style="border-left: 1px solid blue"  class="btn btn-light btn-block">Subjects</button></p></a>
-    </div>
+  <div style="padding: 2%; background-color: white; box-shadow: 3px 3px 9px #888888; margin-left: 2%; border-radius: 7px; padding-bottom: 7%;">
+    <br><img src="{{asset('profile.jpg')}}" alt="" style="width: 40%; height: 40%; border-radius: 100%"><br><br>
+    <div class="row">
+     <div class="col-12">
+         <button class="btn btn-primary">Edit Picture</button>
+     </div>
     </div>
     <div class="row">
-        <div class="col-12" style="margin-top: -2%; ">
-        <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" disabled class="btn btn-light btn-block">Review Subjects</button></a></p>
-    </div>
-    </div>
-    <div class="row">
-        <div class="col-12" style="margin-top: -2%; ">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Cashier's Receipt</button></a></p>
-    </div>
+     <div class="col-12" >
+         <br>
+     <p><b><a href="/dashboard" style="text-decoration: none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Profile</button></a></b></p>
+ </div>
     </div>
     <div class="row">
-        <div class="col-12" style="margin-top: -2%;">
-        <p><a href="" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block ">Schedule</button></a></p>
-    </div>
-    </div>
-        </div>
+     <div class="col-12" style="margin-top: -2%; ">
+     <a href="/subjects" style="text-decoration:none"><p><button style="border-left: 1px solid blue"  class="btn btn-light btn-block">Subjects</button></p></a>
+ </div>
+ </div>
+ <div class="row">
+     <div class="col-12" style="margin-top: -2%; ">
+     <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block" disabled>Review Subjects</button></a></p>
+ </div>
+ </div>
+ <div class="row">
+     <div class="col-12" style="margin-top: -2%;">
+     <p><a href="/schedule" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Schedule</button></a></p>
+ </div>
+ </div>
+     </div>
    
     </div>
 </div>
@@ -248,7 +245,9 @@ $('.deletebtn').on('click', function () {
 
     }
 });
-
+$(document).on('click', '.close', function() {
+    $(this).closest('div').hide();
+});
 })
 </script>
 @endsection

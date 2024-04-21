@@ -9,6 +9,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Enroll;
 use App\Models\PDFModel;
+use App\Models\SchoolYearModel;
 use App\Models\SubjectModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -499,7 +500,30 @@ public function checkprofilever()
 }
 public function editprofile()
 {
+   
     $id = User::where('id', Auth::id())->first();
     return view('student/profile', ['users' => $id]);
+}
+public function schedule()
+{
+    $school_year = SchoolYearModel::latest()->first();
+    $id = Auth::id();
+    $subjects = SubjectStudentModel::where('user_id', $id)->get();
+    $year = CourseYearModel::where('user_id', $id)->first();
+    return view('student/schedule', ['subjects' => $subjects, 'year' => $year, 'schoolyear' => $school_year]);
+}
+public function deleteacceptstudent($id)
+{
+try
+   {
+    AcceptedModel::where('student_id', $id)->delete();
+  Enroll::where('user_id', $id)->delete();
+    return new JsonResponse(['succcess' => 'Success'], 200);}
+catch(\Exception $e)
+{
+    Log::error('An error occurred: ' . $e->getMessage());
+    Log::error($e->getTraceAsString());
+    throw $e;
+}
 }
 }
