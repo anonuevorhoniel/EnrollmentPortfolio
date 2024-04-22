@@ -180,7 +180,7 @@ class EnrollController extends Controller
         }
         else
         {
-            return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->paginate(5), 'course' => AdminCourseModel::paginate(5)]);
+            return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->paginate(5), 'course' => AdminCourseModel::all()]);
         }
         
     }
@@ -191,13 +191,14 @@ class EnrollController extends Controller
             'schedule'  => 'required',
             'year_lvl'  => 'required',
             'points'  => 'required',
-            'course' => 'required'
+            'course' => 'required',
+            'professor' => 'required'
         ]);
         
         try {
             $created = SubjectModel::create($values);
             return new JsonResponse(['success' => 'Success', 'id' => $created->id, 'subject' => $created->subj_name, 'schedule' => $created->schedule,
-           'year' => $created->year_lvl, 'points' => $created->points, 'course' => $created->course ], 200);
+           'year' => $created->year_lvl, 'points' => $created->points, 'course' => $created->course, 'professor' => $created->professor], 200);
         } catch (\Throwable $th) {
             return new JsonResponse(['error' => 'Error'], 500);        }
            }
@@ -214,6 +215,7 @@ class EnrollController extends Controller
                $subject->points = $req->input('points');
                $subject->year_lvl = $req->input('year');
                $subject->course = $req->input('course');
+               $subject->professor = $req->input('professor');
                $subject->update();
                
                return new JsonResponse(['message' => 'Success', 'subject' =>$req->input('name'), 'schedule' => $req->input('sched'),
@@ -243,7 +245,8 @@ class EnrollController extends Controller
                        'subject_name' => $req->input('subj_name'),
                        'schedule' => $req->input('schedule'),
                        'points' => $req->input('points'),
-                       'course' => $req->input('course')
+                       'course' => $req->input('course'),
+                       'professor' => $req->input('professor')
                    ]);
                    return new JsonResponse(['success' => 'Success'], 200);
                }

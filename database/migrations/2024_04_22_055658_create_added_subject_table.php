@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('year_lvl');
             $table->integer('points');
             $table->string('course');
+            $table->string('professor')->nullable();
             $table->timestamps();
         });
     }

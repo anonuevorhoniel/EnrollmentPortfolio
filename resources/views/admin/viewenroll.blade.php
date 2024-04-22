@@ -21,8 +21,9 @@
    
            <div class="row">
             <div class="col-12"  style="">
-              {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
+             
               <h5><b>Pending Students</b></h5> 
+              {{ $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
               <div  style="text-align:right">
                 <input type="text" name="" class="form-control searchbtn" placeholder="Search" id="">
               </div>
@@ -57,8 +58,8 @@
             </div>
             
             <div class="col-12" ><br><br>
-            {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
               <h5><b>Accepted Enrollees </b></h5><br>
+              {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
               <input type="text" name="" class="form-control searchbtnaccept" placeholder="Search" id=""><br>
               <table class="table table-bordered table-hover table-striped accepttable"> 
                 <thead>
@@ -100,7 +101,7 @@
 
 <!-- Modal ng view subjects -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">View Subjects</h5>
@@ -121,6 +122,7 @@
           <th>Schedule</th>
           <th>Points</th>
           <th>Course</th>
+          <th>Professor</th>
         </thead>
         <tbody>
           @if($subjects != null)
@@ -131,6 +133,7 @@
               <td>{{$subject ? $subject->schedule : ''  }}</td>
               <td>{{ $subject ? $subject->points : ''  }}</td>
               <td>{{ $subject ? $subject->course : '' }}</td>
+              <td>{{ $subject ? $subject->professor : '' }}</td>
             </tr>
           @endforeach
           @else
@@ -220,7 +223,7 @@
                 var pdffile = response.idpdf;
                 $('#subjectTable tbody').empty();
                 subjects.forEach(function (subject) {
-                    $('#subjectTable tbody').append('<tr><td>' + subject.subject_name + '</td><td>' + subject.year_level + '</td><td>'+subject.schedule+'</td><td>'+subject.points+'</td><td>' + subject.course + '</td>'   +'</tr>');
+                    $('#subjectTable tbody').append('<tr><td>' + subject.subject_name + '</td><td>' + subject.year_level + '</td><td>'+subject.schedule+'</td><td>'+subject.points+'</td><td>' + subject.course + '</td><td>'+ subject.professor  +'</td></tr>');
                 });
                 if(pdffile)
                 {

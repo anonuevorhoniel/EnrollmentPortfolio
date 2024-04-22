@@ -107,6 +107,7 @@
                 <th scope="col">Points</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Course</th>
+                <th scope="col">Professor</th>
               </tr>
             </thead>
             <tbody>
@@ -120,6 +121,7 @@
                             data-points="{{$subject->points}}"
                             data-year="{{$subject->year_lvl}}"
                             data-course="{{$subject->course}}"
+                            data-professor="{{$subject->professor}}"
                             name="subjects[]"
                             id="subject_{{$subject->id}}"></th>
                         <td>{{$subject->subj_name}}</td>
@@ -127,6 +129,7 @@
                         <td>{{$subject->points}}</td>
                         <td>{{$subject->year_lvl}}</td>
                         <td>{{$subject->course}}</td>
+                        <td>{{$subject->professor}}</td>
                     </tr>
                 @endforeach
             @else
@@ -232,12 +235,14 @@ $check.prop('checked', function(x, y)
     var points = $(this).data('points');
     var year = $(this).data('year');
     var course = $(this).data('course');
+    var professor = $(this).data('professor');
     var data = {
                 'subj_name' : sub,
                 'schedule' : schedule,
                 'points' : points,
                 'year_level' : year,
-                'course' : course
+                'course' : course,
+                'professor' : professor
                 }
     console.log(data);
     $.ajax({

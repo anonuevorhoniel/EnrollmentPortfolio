@@ -9,5 +9,5 @@ class SubjectModel extends Model
 {
     use HasFactory;
     protected $table = 'added_subject';
-    protected $fillable = ['subj_name',	'schedule',	'year_lvl',	'points', 'course'];
+    protected $fillable = ['subj_name',	'schedule',	'year_lvl',	'points', 'course', 'professor'];
 }

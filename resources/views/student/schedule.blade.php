@@ -33,7 +33,7 @@
             <tr>
                 <td>{{$subject->subject_name}}</td>
                 <td>{{$subject->schedule}}</td>
-                <td>Prof. Hello World</td>
+                <td>{{$subject->professor}}</td>
                 <td>{{$subject->points}}</td>
 
             </tr>

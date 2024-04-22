@@ -20,7 +20,7 @@
     <div class="alert alert-danger denied">Verification Denied</div>
     <div class="alert alert-success verified  ">Verified</div>
 
-        <table class="table table-bordered">
+        <table class="table table-bordered table-hover table-striped">
             <thead>
               <tr>					
                 <th scope="col">Subject Name</th>
@@ -28,6 +28,7 @@
                 <th scope="col">Points</th>
                 <th scope="col">Year Level</th>
                 <th scope="col">Course</th>
+                <th scope="col">Professor</th>
                 <th scope="col" class="action" colspan="2">Action</th>
 
               </tr>
@@ -41,6 +42,7 @@
                 <td>{{$subject->points}}</td>
                 <td>{{$subject->year_level}}</td>
                 <td>{{$subject->course}}</td>
+                <td>{{$subject->professor}}</td>
                 <td class="btn btn-success editbtn" 
                 data-toggle="modal"
                 data-target="#exampleModal"
@@ -50,6 +52,7 @@
                 data-points ="{{$subject->points}}"
                 data-year = "{{$subject->year_level}}"
                 data-course ="{{$subject->course}}"
+                data-professor="{{$subject->professor}}"
                 >Edit</td>
                 <td class="btn btn-danger deletebtn" data-id="{{$subject->id}}" data-sub="{{$subject->subject_name}}">Delete</td>
               </tr>
@@ -204,13 +207,15 @@ $('.editbtn').on('click', function () {
   $points =  $(this).data('points');
   $year =  $(this).data('year');
   $course =  $(this).data('course');
+  $professor =$(this).data('professor');
 var data = {
     'id' : $id,
     'subject' : $subject,
     'schedule' : $schedule,
     'points' : $points,
     'year' : $year,
-    'course' : $course
+    'course' : $course,
+    'professor' : $professor
 }
 $('.subject').val($subject);
 $('.schedule').val($schedule);
@@ -218,6 +223,7 @@ $('.points').val($points);
 $('.subject').val($subject);
 $('.year').val($year);
 $('.course').val($course);
+$('.professor').val($professor)
 console.log(data);
 });
 

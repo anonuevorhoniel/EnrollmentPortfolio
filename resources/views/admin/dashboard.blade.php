@@ -69,6 +69,10 @@
                   </select>
                 </div>
             </div>
+            <div class="col-4">
+              <label for="">Professor</label>
+              <input type="text" class="form-control professor" name="" id="">
+            </div>
         </div>
        
         <button class="btn btn-primary" id="sub">Submit</button>
@@ -93,6 +97,7 @@
                     <th scope="col">Points</th>
                     <th scope="col">Year Level</th>
                     <th scope="col">Course</th>
+                    <th scope="col">Professor</th>
                     <th colspan="2">Actions</th>
                   </tr>
                 </thead>
@@ -105,6 +110,7 @@
                   <td>{{$item->points}}</td>
                   <td>{{$item->year_lvl}}</td>
                   <td>{{$item->course}}</td>
+                  <td>{{$item->professor}}</td>
                   <td><button class="btn btn-warning edit" id="editmodal"
                     data-id = "{{$item->id}}"
                     data-name = "{{$item->subj_name}}"
@@ -113,6 +119,7 @@
                     data-points = "{{$item->points}}"
                     data-year = "{{$item->year_lvl}}"
                     data-course = "{{$item->course}}"
+                    data-professor = "{{$item->professor}}"
                     data-toggle="modal" data-target="#exampleModal">Edit</button></td>
                   <td> <button class="btn btn-danger deleteBtn" data-id="{{$item->id}}">Delete</button></td>
                 </tr>
@@ -172,6 +179,12 @@
                 </select>
               </div>
             </div>
+            <div class="row">
+              <div class="col-12">
+                <label for="">Professor</label>
+                <input type="text" class="form-control" name="" id="professor">
+              </div>
+            </div>
        
         </div>  
         <div class="modal-footer">
@@ -209,6 +222,8 @@ $sched = $(this).data('sched');
 $points = $(this).data('points');
 $year = $(this).data('year');
 $course = $(this).data('course');
+$professor = $(this).data('professor');
+
 
 $('.name').val($name);
 $('#name').val($name);
@@ -216,6 +231,8 @@ $('#sched').val($sched);
 $('#points').val($points);
 $('.year').val($year);
 $(".course").val($course)
+$("#professor").val($professor)
+
 });
 $("#savec").on('click', function () {
     var name = $('#name').val();
@@ -223,13 +240,15 @@ $("#savec").on('click', function () {
     var points = $('#points').val();
     var year = $('.year').val(); 
     var course = $('#course').val();
+    var professor = $('#professor').val();
     var data = {
         'id' : $id,
         'name' : name,
         'sched' : sched,
         'points' : points,
         'year' : year,
-        'course' : course
+        'course' : course,
+        'professor' : professor
     }
     console.log(data);
     $.ajax({
@@ -248,17 +267,21 @@ $("#savec").on('click', function () {
             $tableRow.find('td:eq(2)').text(points);
             $tableRow.find('td:eq(3)').text(year);
             $tableRow.find('td:eq(4)').text(course);
+            $tableRow.find('td:eq(5)').text(professor);
+
     $('#name').val(name);
     $('#sched').val(sched);
     $('#points').val(points);
     $('.year').val(year); 
     $('#course').val(course);
+    $('#professor').val(professor)
     var editBtn = $("button[data-id='"+ $id +"']");
     editBtn.data('name', name);
     editBtn.data('sched', sched);
     editBtn.data('points', points);
     editBtn.data('year', year);
     editBtn.data('course', course);
+    editBtn.data('professor', professor)
         },
         error: function (response) { 
             console.log(response);
@@ -290,13 +313,15 @@ $("#sub").on('click', function () {
   var year = $('.year').val();
   var points = $('.points').val();
   var course = $('.course').val();
+  var professor = $('.professor').val();
 
   var data = {
     'subj_name' : subject,
     'schedule' : schedule,
     'year_lvl' : year,
     'points' : points,
-    'course' : course
+    'course' : course,
+    'professor' : professor
   }
   console.log(data);
   $.ajax({
@@ -314,13 +339,15 @@ $("#sub").on('click', function () {
       console.log(response.points);
       console.log(response.year);
       console.log(response.course);
+      console.log(response.professor);
       $('.tablesubject tbody').prepend("<tr><td>"+ subject + "</td><td>"+ schedule + "</td><td>" + year + "</td><td>" + points + "</td><td>"+ course
-        + "<td><button class='btn btn-warning edit' id='editmodal' data-id = '"+ response.id + "'" +
+        +"</td><td>" + professor +"</td><td><button class='btn btn-warning edit' id='editmodal' data-id = '"+ response.id + "'" +
     "data-sched = '"+ response.schedule + "'" +
     "data-name = '"+ response.subject + "'" +
     "data-points = '"+ response.points + "'" +
     "data-year = '"+ response.year + "'" +
     "data-course = '"+ response.course + "'" +
+    "data-professor = '"+ response.professor + "'" +
     "data-toggle='modal' data-target='#exampleModal'>Edit</button></td>" + 
     "<td> <button class='btn btn-danger deleteBtn' data-id='"+ response.id+"'>Delete</button>" +
     "</td></tr>");
