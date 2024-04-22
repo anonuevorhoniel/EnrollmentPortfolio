@@ -22,7 +22,11 @@
            <div class="row">
             <div class="col-12"  style="">
               {{  $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
-              <h5><b>Pending Students</b></h5><br>
+              <h5><b>Pending Students</b></h5> 
+              <div  style="text-align:right">
+                <input type="text" name="" class="form-control searchbtn" placeholder="Search" id="">
+              </div>
+              <br>
               <table class="table table-bordered table-striped table-hover pendingtable"> 
                 <thead>
                   <tr>
@@ -55,6 +59,7 @@
             <div class="col-12" ><br><br>
             {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
               <h5><b>Accepted Enrollees </b></h5><br>
+              <input type="text" name="" class="form-control searchbtnaccept" placeholder="Search" id=""><br>
               <table class="table table-bordered table-hover table-striped accepttable"> 
                 <thead>
                   <tr>
@@ -217,8 +222,15 @@
                 subjects.forEach(function (subject) {
                     $('#subjectTable tbody').append('<tr><td>' + subject.subject_name + '</td><td>' + subject.year_level + '</td><td>'+subject.schedule+'</td><td>'+subject.points+'</td><td>' + subject.course + '</td>'   +'</tr>');
                 });
-                $('.pdfdivs').text(pdffile.original_name);
+                if(pdffile)
+                {
+                  $('.pdfdivs').text(pdffile.original_name);
                 $('.pdfdivs').attr('href', pdffile.path + pdffile.filename);
+                }
+               else
+               {
+                $('.pdfdivs').text('No File');
+               }
               
             } else {
                 alert('Failed to retrieve subjects');
@@ -257,10 +269,6 @@ $(document).on('click','.pending', function()
     }
   });
   }
-  else
-  {
-
-  }
  
 })
 $(document).on('click','.removestudent', function () {
@@ -280,11 +288,70 @@ $(document).on('click','.removestudent', function () {
   }
  });
  }
- else
- {
-  
- }
 });
-  })
+//pending students table search
+$(document).on('input', '.searchbtn', function()
+{
+ var value = $(this).val();
+
+  $.ajax({
+    type: "GET",
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    url: "/searchdisplay",
+    data: {'value' : value},
+    success: function (response) {
+      $('.pendingtable tbody').empty();
+      if(response.length > 0)
+    {  response.forEach(function(users)
+    {
+      $('.pendingtable tbody').append("<tr><td>"+ users.name + "</td><td>" +users.lastname + "  <td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='"+ users.user_id + "'>View</button>"+ 
+        "<td><button  class='btn btn-success acceptbtn' data-user_id='"+users.user_id+"' data-id='"+users.id+"' data-name='"+users.name+"' data-lastname='"+users.lastname+"'>Accept</button>" +
+          "<td> <button class='btn btn-danger removestudent'  data-user_id='"+users.user_id+"' data-id='"+users.id+"'>Remove</button></td>" +
+          "</td></tr>");
+    })}
+    else
+    {
+      $('.pendingtable tbody').append("<tr><td colspan='5' style='text-align:center'>No Records</td></tr>")
+
+    }
+    }
+  });
+});
+//accepted students table search
+$(document).on('input', '.searchbtnaccept', function()
+{
+ var value = $(this).val();
+
+  $.ajax({
+    type: "GET",
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    url: "/searchdisplayaccept",
+    data: {'value' : value},
+    success: function (response) {
+     
+      $('.accepttable tbody').empty();
+      if(response.length > 0)
+
+      {response.forEach(function(users)
+    {
+      
+      $('.accepttable tbody').append("<tr><td>"+ users.name + "</td><td>" +users.lastname + "  <td><button  class='btn btn-primary views' data-toggle='modal' data-target='#exampleModal'  data-user_id='"+ users.student_id + "'>View</button>"+ 
+        "<td> <button class='btn btn-warning pending' data-name='"+users.name+"' data-lastname='"+users.lastname+"' data-user_id='"+ users.student_id+"'  data-id='"+users.id+"'>Pending</button></td>" +
+        "<td> <button class='btn btn-danger pending' data-user_id = '"+users.student_id+"'>Delete Student</button></td></tr>" +
+          "</td></tr>");
+        
+    });  }
+    else
+          {
+            $('.accepttable tbody').append("<tr><td colspan='5' style='text-align:center'>No Records</td></tr>")
+          }
+    }
+  });
+});
+  });
 </script>
 @endsection

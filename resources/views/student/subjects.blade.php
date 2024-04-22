@@ -63,7 +63,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><a href="pdfs/{{$pdfs->filename}}" class="pdfsdiv">{{$pdfs->original_name}}</a>
+                            <td ><a href="pdfs/{{$pdfs->filename}}" class="pdfsdiv">{{$pdfs->original_name}}</a>
                             </td>
                             <td><div class="pdfsize">{{$pdfs->size}}Kb</div>
                             </td>
@@ -71,7 +71,7 @@
                     </tbody>
                 </table>
                 @else
-                <div>No PDF</div>
+                <div class="pdfsdiv1">No PDF</div>
                 @endif
                 <div class="errorsa"></div>
             </div>
@@ -110,7 +110,7 @@
               </tr>
             </thead>
             <tbody>
-                @if($subjects->count() > 0)
+                @if($subjects && $subjects->count() > 0)
                 @foreach ($subjects as $subject)
                     <tr class="rowcheck">
                         <th scope="row"><input type="checkbox" class="checks"
@@ -291,6 +291,7 @@ $(document).on('change', '.inputreceipt', function() {
     var file = this.files[0];
     var fileSize = (file.size / 1024).toFixed(2);
 $('.pdfsdiv').text(file.name);
+$('.pdfsdiv1').text(file.name);
 $('.pdfsize').text(fileSize + 'Kb');
 });
     $('.receiptbtn').on('click', function() {

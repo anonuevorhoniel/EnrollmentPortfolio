@@ -526,4 +526,20 @@ catch(\Exception $e)
     throw $e;
 }
 }
+public function searchdisplay(Request $req)
+{
+
+   $value = $req->input('value');
+   $name = Enroll::where('name', 'like', '%' . $value .'%')
+   ->whereNotIn('user_id', function($query) {
+    $query->select('student_id')->from('accepted');
+    })->get();
+    return response()->json($name);
+}
+public function searchdisplayaccept(Request $req)
+{
+   $value = $req->input('value');
+   $name = AcceptedModel::where('name', 'like', '%' . $value .'%')->get();
+    return response()->json($name);
+}
 }

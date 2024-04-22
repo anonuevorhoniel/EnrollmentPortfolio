@@ -53,3 +53,5 @@ Route::get('/checkprofilever', [EnrollController::class, 'checkprofilever']);
 Route::get('/editprofile', [EnrollController::class, 'editprofile'])->middleware('auth');
 Route::get('/schedule', [EnrollController::class, 'schedule']);
 Route::delete('/deleteacceptstudent/{id}', [EnrollController::class, 'deleteacceptstudent']);
+Route::get('/searchdisplay', [EnrollController::class, 'searchdisplay']);
+Route::get('/searchdisplayaccept', [EnrollController::class, 'searchdisplayaccept']);
