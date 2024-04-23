@@ -57,7 +57,7 @@ class EnrollController extends Controller
         }
     }
     
-    public function subjects()
+    public function subjects(Request $req)
     {
         if(Auth::user()->role == 'admin')
         {
@@ -68,6 +68,11 @@ class EnrollController extends Controller
          return redirect()->route('login');
         }
         else{
+            $id = $req->user()->id; 
+            $info = Enroll::where('user_id', $id)->first();
+            if($info)
+           { $verified = AcceptedModel::where('student_id', $id)->first();
+            $subjectscheck = SubjectStudentModel::where('user_id', $id)->get();
            $idpdf = PDFModel::where('user_id', Auth::id())->first();
             $courses = AdminCourseModel::all();
             if ( $filtered = CourseYearModel::where('user_id', Auth::id())->first())
@@ -76,13 +81,18 @@ class EnrollController extends Controller
             ->where('year_lvl', 'like', '%' . $filtered->year_level . '%')
             ->get();
             
-                return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level, 'pdfs' => $idpdf]);
+                return view('student/subjects', ['subjects' => $subjects, 'courses' => $courses, 'year' => $filtered->year_level, 'pdfs' => $idpdf, 'subjectscheck' => $subjectscheck, 'verified' => $verified]);
 
             }   
             else
             {
-                return view('student/subjects', ['courses' => $courses, 'year' => null, 'subjects' => null,  'pdfs' => $idpdf]);
+                return view('student/subjects', ['courses' => $courses, 'year' => null, 'subjects' => null,  'pdfs' => $idpdf, 'subjectscheck' => $subjectscheck, 'verified' => $verified]);
             }
+        }
+        else
+        {
+            return redirect()->route('student.dashboard');
+        }
         }
        
     }
@@ -96,7 +106,11 @@ class EnrollController extends Controller
             return redirect()->route('login');
            }
            else{
-            return view('student/dashboard', ['data' => Enroll::where('user_id', Auth::id())->first()]);
+            $id = $req->user()->id;
+            $verified = AcceptedModel::where('student_id', $id)->first();
+            $subjectscheck = SubjectStudentModel::where('user_id', $id)->get();
+            $info = Enroll::where('user_id', $id)->first();
+            return view('student/dashboard', ['data' => $info, 'info' => $info, 'verified' => $verified, 'subjectscheck' => $subjectscheck]);
            }
         }
     public function createUsers(Request $req)
@@ -180,6 +194,7 @@ class EnrollController extends Controller
         }
         else
         {
+         
             return view('admin/dashboard', ['data' => SubjectModel::orderBy('created_at', 'desc')->paginate(5), 'course' => AdminCourseModel::all()]);
         }
         
@@ -310,18 +325,29 @@ public function acceptstudent(Request $req, $id, $user_id)
   
     
 }
-public function review()
+public function review(Request $req)
 {
-    $id = Auth::id();
+    if($req->user()->role == 'admin')
+    {
+        return redirect()->route('admin.dashboard');
+    }
+    $id = $req->user()->id;
    $subjects = SubjectStudentModel::where('user_id', $id)->get();
+   if($subjects && $subjects->count() > 0)
+   {$verified = AcceptedModel::where('student_id', $id)->first();
    if($subjects)
    {
-    return view('student/review', ['subjects' => $subjects]);
+    return view('student/review', ['subjects' => $subjects, 'verified' => $verified]);
    }
    else
    {
-    return view('student/review', ['subjects' => null]);
+    return view('student/review', ['subjects' => null, 'verified' => $verified]);
    }
+}
+else
+{
+    return redirect()->route('student.dashboard');
+}
 }
 public function deletesubject(Request $req, $id)
 {
@@ -507,13 +533,21 @@ public function editprofile()
     $id = User::where('id', Auth::id())->first();
     return view('student/profile', ['users' => $id]);
 }
-public function schedule()
+public function schedule(Request $req)
 {
-    $school_year = SchoolYearModel::latest()->first();
-    $id = Auth::id();
+    $id = $req->user()->id;
+    $verified = AcceptedModel::where('student_id', $id)->first();
+    if($verified)
+    {
+        $school_year = SchoolYearModel::latest()->first();
     $subjects = SubjectStudentModel::where('user_id', $id)->get();
     $year = CourseYearModel::where('user_id', $id)->first();
     return view('student/schedule', ['subjects' => $subjects, 'year' => $year, 'schoolyear' => $school_year]);
+}
+else
+{
+    return redirect()->route('student.dashboard');
+}
 }
 public function deleteacceptstudent($id)
 {

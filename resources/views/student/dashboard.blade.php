@@ -75,21 +75,45 @@
          <p><b><a href="/dashboard" style="text-decoration: none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block" disabled>Profile</button></a></b></p>
      </div>
         </div>
+        @if($info)
         <div class="row">
          <div class="col-12" style="margin-top: -2%; ">
          <a href="/subjects" style="text-decoration:none"><p><button style="border-left: 1px solid blue"  class="btn btn-light btn-block">Subjects</button></p></a>
      </div>
      </div>
+     @else
+     <div class="row">
+        <div class="col-12" style="margin-top: -2%; ">
+        <a href="/subjects" style="text-decoration:none"><p><button disabled style="border-left: 1px solid blue"  class="btn btn-light btn-block">Subjects</button></p></a>
+    </div>
+    </div>
+    @endif
+    @if($subjectscheck && $subjectscheck->count() > 0)
      <div class="row">
          <div class="col-12" style="margin-top: -2%; ">
          <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Review Subjects</button></a></p>
      </div>
      </div>
+@else
+<div class="row">
+    <div class="col-12" style="margin-top: -2%; ">
+    <p><a href="/review" style="text-decoration:none"><button disabled style="border-left: 1px solid blue" class="btn btn-light btn-block">Review Subjects</button></a></p>
+</div>
+</div>
+@endif
+@if($verified)
      <div class="row">
          <div class="col-12" style="margin-top: -2%;">
          <p><a href="/schedule" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Schedule</button></a></p>
      </div>
      </div>
+     @else
+     <div class="row">
+        <div class="col-12" style="margin-top: -2%;">
+        <p><a href="/schedule" style="text-decoration:none"><button disabled style="border-left: 1px solid blue" class="btn btn-light btn-block">Schedule</button></a></p>
+    </div>
+    </div>
+    @endif
          </div>
    
     </div>

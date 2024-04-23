@@ -88,11 +88,20 @@
      <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block" disabled>Review Subjects</button></a></p>
  </div>
  </div>
+
+ @if($verified)
  <div class="row">
      <div class="col-12" style="margin-top: -2%;">
      <p><a href="/schedule" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Schedule</button></a></p>
  </div>
  </div>
+@else
+<div class="row">
+  <div class="col-12" style="margin-top: -2%;">
+  <p><a href="/schedule" style="text-decoration:none"><button disabled style="border-left: 1px solid blue" class="btn btn-light btn-block">Schedule</button></a></p>
+</div>
+</div>
+@endif
      </div>
    
     </div>

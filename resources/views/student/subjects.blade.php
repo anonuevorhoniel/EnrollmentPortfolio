@@ -164,16 +164,33 @@
         <a href=""  style="text-decoration:none"><p><button style="border-left: 1px solid blue"  class="btn btn-light btn-block" disabled>Subjects</button></p></a>
     </div>
     </div>
+    @if($subjectscheck && $subjectscheck->count() > 0)
     <div class="row">
         <div class="col-12" style="margin-top: -2%; ">
-        <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block">Review Subjects</button></a></p>
+        <p><a href="/review" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block reviewsub">Review Subjects</button></a></p>
     </div>
     </div>
+    @else
+    <div class="row">
+        <div class="col-12" style="margin-top: -2%; ">
+        <p><a href="/review" style="text-decoration:none"><button disabled style="border-left: 1px solid blue" class="btn btn-light btn-block reviewsub">Review Subjects</button></a></p>
+    </div>
+    </div>
+    @endif
+
+@if($verified)
     <div class="row">
         <div class="col-12" style="margin-top: -2%;">
         <p><a href="/schedule" style="text-decoration:none"><button style="border-left: 1px solid blue" class="btn btn-light btn-block" >Schedule</button></a></p>
     </div>
     </div>
+@else
+<div class="row">
+    <div class="col-12" style="margin-top: -2%;">
+    <p><a href="/schedule" style="text-decoration:none"><button disabled style="border-left: 1px solid blue" class="btn btn-light btn-block" >Schedule</button></a></p>
+</div>
+</div>
+@endif
         </div>
    
     </div>
@@ -244,7 +261,6 @@ $check.prop('checked', function(x, y)
                 'course' : course,
                 'professor' : professor
                 }
-    console.log(data);
     $.ajax({
         type: "POST",
         url: "/savesubject",
@@ -257,6 +273,7 @@ $check.prop('checked', function(x, y)
             console.log(response);
             $('#exists').hide();
             $('#success').show();
+            $('.reviewsub').prop('disabled', false);
         },
         error: function(xhr, status, error) {
             $('#success').hide();
