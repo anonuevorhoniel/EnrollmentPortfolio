@@ -55,3 +55,7 @@ Route::get('/schedule', [EnrollController::class, 'schedule']);
 Route::delete('/deleteacceptstudent/{id}', [EnrollController::class, 'deleteacceptstudent']);
 Route::get('/searchdisplay', [EnrollController::class, 'searchdisplay']);
 Route::get('/searchdisplayaccept', [EnrollController::class, 'searchdisplayaccept']);
+Route::get('/sections', [EnrollController::class, 'sections']);
+Route::get('/getcourses', [EnrollController::class, 'getcourses']);
+Route::get('/getyear', [EnrollController::class, 'getyear']);
+Route::post('/savesection/{id}', [EnrollController::class, 'savesection']);

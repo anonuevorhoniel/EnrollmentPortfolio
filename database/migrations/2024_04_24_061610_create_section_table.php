@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accepted', function (Blueprint $table) {
+        Schema::create('section', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('student_id')->unique();
+            $table->unsignedBigInteger('user_id');
+            $table->string('section');
             $table->string('name');
             $table->string('lastname');
             $table->string('course');
+            $table->string('year_level');
             $table->timestamps();
-
-            $table->foreign('student_id')->references('user_id')->on('enroll_table')->onDelete('cascade');
+            
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accepted');
+        Schema::dropIfExists('section');
     }
 };

@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Enroll;
 use App\Models\PDFModel;
 use App\Models\SchoolYearModel;
+use App\Models\SectionModel;
 use App\Models\SubjectModel;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Js;
 use League\CommonMark\Node\Block\Document;
+use PHPUnit\Framework\MockObject\Stub\ReturnValueMap;
 use RealRashid\SweetAlert\Facades\Alert;
 use Wavey\Sweetalert\Sweetalert;
 
@@ -319,7 +321,8 @@ public function acceptstudent(Request $req, $id, $user_id)
             'student_id' => $user_id,
             'name' => $nameL->name,
             'lastname' => $nameL->lastname,
-            'course' => $courseYear->course
+            'course' => $courseYear->course,
+            'year_level' => $courseYear->year_level
         ]);
         return response()->json(['success' => 'Success', 'id' => $created->id ], 200);
   
@@ -578,5 +581,78 @@ public function searchdisplayaccept(Request $req)
    $value = $req->input('value');
    $name = AcceptedModel::where('name', 'like', '%' . $value .'%')->get();
     return response()->json($name);
+}
+public function sections(Request $req)
+{
+    $accept = AcceptedModel::whereNotIn('student_id', function($query) {
+        $query->select('user_id')->from('section');}
+        )->paginate(30);
+    $courses = AdminCourseModel::all();
+return view('admin/sections', ['accept' => $accept, 'courses' => $courses]);
+}
+public function getcourses(Request $req)
+{
+    $year = $req->input('year');
+   $course = $req->input('courses');
+   if($year == "")
+   {
+    $getcourse = AcceptedModel::where('course', 'like', '%'. $course . '%')
+    ->whereNotIn('student_id', function($query) {
+        $query->select('user_id')->from('section');}
+        )->get();
+    return response()->json($getcourse);
+   }
+   $getcourse = AcceptedModel::where('course', 'like', '%'. $course . '%')
+   ->where('year_level', 'like', '%'. $year . '%')
+   ->whereNotIn('student_id', function($query) {
+    $query->select('user_id')->from('section');}
+    )->get();
+   return response()->json($getcourse);
+}
+public function getyear(Request $req) {
+    $year = $req->input('year');
+    $course = $req->input('course');
+    if($course == "")
+    {
+        $value = AcceptedModel::where('year_level', 'like', '%'. $year . '%')
+        ->whereNotIn('student_id', function($query) {
+            $query->select('user_id')->from('section');}
+            )->get();
+        return response()->json($value);
+    }
+    $value = AcceptedModel::where('year_level', 'like', '%'. $year . '%')
+    ->where('course', 'like', '%'. $course . '%')
+    ->whereNotIn('student_id', function($query) {
+        $query->select('user_id')->from('section');}
+        )->get();
+        return response()->json($value);
+}
+public function savesection(Request $req, $id)
+{
+    if(SectionModel::where('user_id', $id)->first())
+    {
+        return response()->json(['message' => 'error']);
+    }
+    else
+    {
+       $req->validate([
+             'section' => 'required'
+        ]);
+        $create = SectionModel::create([
+        'user_id' => $id,
+        'section' => $req->input('section'),
+        'name' => $req->input('name'),
+        'lastname' => $req->input('lastname'),
+        'course' => $req->input('course'),
+        'year_level' => $req->input('year')
+    ]);
+    if($create)
+    {
+        return response()->json(['message' => 'success']);
+    }
+    else
+    {
+        return response()->json(['message' => 'error']);
+    }}
 }
 }

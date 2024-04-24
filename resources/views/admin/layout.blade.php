@@ -44,6 +44,10 @@
             <li class="nav-item">
               <a href="/dashboardAdmin"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >Add Subjects</button></a>
         </li>
+        <li class="nav-item">
+          <a href="/sections"><button class="btn btn-dark" type="button" id="dropdownMenuButton" >Sections </button></a>
+    </li>
+      </li>
            
             
 

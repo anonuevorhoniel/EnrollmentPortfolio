@@ -25,7 +25,7 @@
               <h5><b>Pending Students</b></h5> 
               {{ $users->appends(['accepted' => $accepted->currentPage()])->links(); }}
               <div  style="text-align:right">
-                <input type="text" name="" class="form-control searchbtn" placeholder="Search" id="">
+                <input type="text" name="" class="form-control searchbtn" placeholder="Search" style="border: 1px solid grey" id="">
               </div>
               <br>
               <table class="table table-bordered table-striped table-hover pendingtable"> 
@@ -60,7 +60,7 @@
             <div class="col-12" ><br><br>
               <h5><b>Accepted Enrollees </b></h5><br>
               {{  $accepted->appends(['users' => $users->currentPage()])->links(); }}
-              <input type="text" name="" class="form-control searchbtnaccept" placeholder="Search" id=""><br>
+              <input type="text" name="" class="form-control searchbtnaccept" placeholder="Search" style="border: 1px solid grey" id=""><br>
               <table class="table table-bordered table-hover table-striped accepttable"> 
                 <thead>
                   <tr>
@@ -155,6 +155,12 @@
     {
         border-color: black;
     }
+    table.table-bordered > thead > tr > th{
+  border:1px solid grey;
+}
+table.table-bordered > tbody > tr > td{
+  border:1px solid grey;
+}
 </style>
 <script>
   $(function (){
@@ -357,4 +363,5 @@ $(document).on('input', '.searchbtnaccept', function()
 });
   });
 </script>
+
 @endsection

@@ -37,7 +37,7 @@
             <div class="col-4">  
                 <div class="form-group">
                 <label for="exampleInputEmail1">Year</label>
-                <select name="year_lvl" id="year_lvl" class="custom-select year">
+                <select name="year_lvl" class="custom-select year">
                   <option value="1st Year">1st Year</option>
                     <option value="2nd Year">2nd Year</option>
                     <option value="3rd Year">3rd Year</option>
@@ -159,7 +159,7 @@
                 </div>
                 <div class="col-6"><br>
                     <label for="">Year Level</label>
-                    <select name="year_lvl" id="year_lvl" class="custom-select year">
+                    <select name="year_lvl" id="year_lvl" class="custom-select">
                         <option value="1st Year">1st Year</option>
                           <option value="2nd Year">2nd Year</option>
                           <option value="3rd Year">3rd Year</option>
@@ -229,7 +229,7 @@ $('.name').val($name);
 $('#name').val($name);
 $('#sched').val($sched);
 $('#points').val($points);
-$('.year').val($year);
+$('#year_lvl').val($year);
 $(".course").val($course)
 $("#professor").val($professor)
 
@@ -238,7 +238,7 @@ $("#savec").on('click', function () {
     var name = $('#name').val();
     var sched = $('#sched').val();
     var points = $('#points').val();
-    var year = $('.year').val(); 
+    var year = $('#year_lvl').val(); 
     var course = $('#course').val();
     var professor = $('#professor').val();
     var data = {

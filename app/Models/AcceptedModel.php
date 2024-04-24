@@ -9,5 +9,5 @@ class AcceptedModel extends Model
 {
     use HasFactory;
     protected $table = 'accepted';
-    protected $fillable = ['student_id', 'name', 'lastname', 'course'];
+    protected $fillable = ['student_id', 'name', 'lastname', 'course', 'year_level'];
 }
